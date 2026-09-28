@@ -51,6 +51,14 @@
   --color-cobalt: var(--cobalt);
   --color-cobalt-soft: var(--cobalt-soft);
   --color-icy: var(--icy);
+  --color-ins: var(--ins);
+  --color-ins-soft: var(--ins-soft);
+  --color-del: var(--del);
+  --color-del-soft: var(--del-soft);
+  --color-note: var(--note);
+  --color-note-soft: var(--note-soft);
+  --color-scrub: var(--scrub);
+  --color-paper-gutter: var(--paper-gutter);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -66,6 +74,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-doc: "Libre Baskerville", Baskerville, Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
   --shadow-panel: 0 1px 2px oklch(0.2 0.06 265 / 0.06), 0 14px 40px -24px oklch(0.2 0.06 265 / 0.35);
   --shadow-lift: 0 1px 2px oklch(0.2 0.06 265 / 0.05), 0 24px 60px -32px oklch(0.2 0.06 265 / 0.45);
@@ -224,3 +233,95 @@
   contain: paint;
 }
 
+/*
+ * /try inspector scope. The DOCX inspector's palette only applies while /try
+ * is mounted: `.loupe-try` on its wrapper, plus `html.loupe-try-active`
+ * (added/removed by DocxExperience) so portalled dialogs, tooltips and
+ * thumbnails match. The developer homepage never gets these classes.
+ */
+:root.loupe-try-active,
+.loupe-try {
+  --radius: 0.75rem;
+  --background: oklch(0.976 0.008 260);
+  --foreground: oklch(0.22 0.03 262);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 262);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 262);
+  --primary: oklch(0.552 0.245 265.5);
+  --primary-foreground: oklch(0.99 0.005 260);
+  --secondary: oklch(0.955 0.014 260);
+  --secondary-foreground: oklch(0.32 0.04 262);
+  --muted: oklch(0.962 0.01 260);
+  --muted-foreground: oklch(0.53 0.03 260);
+  --accent: oklch(0.945 0.032 258);
+  --accent-foreground: oklch(0.42 0.15 263);
+  --border: oklch(0.915 0.012 258);
+  --input: oklch(0.915 0.012 258);
+  --ring: oklch(0.552 0.245 265.5);
+  --ins: oklch(0.5 0.19 258);
+  --ins-soft: oklch(0.94 0.045 254);
+  --del: oklch(0.55 0.17 22);
+  --del-soft: oklch(0.95 0.035 25);
+  --note: oklch(0.62 0.13 75);
+  --note-soft: oklch(0.95 0.055 85);
+  --scrub: oklch(0.68 0.19 47);
+  --paper-gutter: oklch(0.976 0.008 260);
+}
+
+:root.loupe-try-active.dark,
+.dark .loupe-try,
+.loupe-try.dark {
+  --background: oklch(0.17 0.02 264);
+  --foreground: oklch(0.95 0.01 258);
+  --card: oklch(0.215 0.024 264);
+  --card-foreground: oklch(0.95 0.01 258);
+  --popover: oklch(0.215 0.024 264);
+  --popover-foreground: oklch(0.95 0.01 258);
+  --primary: oklch(0.66 0.18 263);
+  --primary-foreground: oklch(0.16 0.02 264);
+  --secondary: oklch(0.27 0.026 264);
+  --secondary-foreground: oklch(0.93 0.01 258);
+  --muted: oklch(0.26 0.024 264);
+  --muted-foreground: oklch(0.7 0.02 258);
+  --accent: oklch(0.3 0.05 262);
+  --accent-foreground: oklch(0.88 0.06 258);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.66 0.18 263);
+  --ins: oklch(0.74 0.14 258);
+  --ins-soft: oklch(0.32 0.07 258);
+  --del: oklch(0.72 0.15 22);
+  --del-soft: oklch(0.32 0.07 25);
+  --note: oklch(0.78 0.13 78);
+  --note-soft: oklch(0.33 0.06 80);
+  --scrub: oklch(0.75 0.17 52);
+  --paper-gutter: oklch(0.17 0.02 264);
+}
+
+@utility label-micro {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+@utility rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pulse-edit {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  30% { box-shadow: 0 0 0 6px color-mix(in oklab, var(--color-primary) 22%, transparent); }
+}
+
+.loupe-try .edit-pulse {
+  animation: pulse-edit 1.2s ease-out 1;
+  border-radius: 3px;
+}

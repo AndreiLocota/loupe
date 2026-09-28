@@ -1,0 +1,42 @@
+{
+  "name": "@veridox-ai/loupe-docx",
+  "version": "3.0.2",
+  "description": "DOCX adapter for the Loupe headless document viewer (canvas rendering via @silurus/ooxml).",
+  "keywords": [
+    "docx",
+    "word",
+    "document-viewer",
+    "viewer"
+  ],
+  "license": "UNLICENSED",
+  "author": "Veridox",
+  "homepage": "https://github.com/veridox-ai/tools.loupe#readme",
+  "bugs": {
+    "url": "https://github.com/veridox-ai/tools.loupe/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veridox-ai/tools.loupe.git",
+    "directory": "packages/viewer-docx"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@silurus/ooxml": "0.86.0",
+    "jszip": "3.10.1"
+  },
+  "peerDependencies": {
+    "@veridox-ai/loupe-core": "^0.3.1"
+  }
+}
