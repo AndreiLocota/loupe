@@ -1,0 +1,52 @@
+{
+  "name": "@veridox-ai/loupe-image",
+  "version": "2.0.0",
+  "description": "Image adapter (JPEG/PNG/GIF/WebP/SVG/TIFF/HEIC) for the Loupe headless document viewer.",
+  "keywords": [
+    "image",
+    "tiff",
+    "heic",
+    "svg",
+    "webp",
+    "document-viewer"
+  ],
+  "license": "UNLICENSED",
+  "author": "Veridox",
+  "homepage": "https://github.com/AndreiLocota/loupe#readme",
+  "bugs": {
+    "url": "https://github.com/AndreiLocota/loupe/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreiLocota/loupe.git",
+    "directory": "packages/viewer-image"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "utif": "3.1.0",
+    "heic-to": "1.4.2"
+  },
+  "peerDependencies": {
+    "@veridox-ai/loupe-core": "^0.3.0"
+  }
+}

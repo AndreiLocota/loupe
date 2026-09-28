@@ -1,0 +1,53 @@
+{
+  "name": "@veridox-ai/loupe-core",
+  "version": "0.3.1",
+  "description": "Headless document-viewer core: adapter interface, state machine, magic-byte format detection, errors, events, cancellation.",
+  "keywords": [
+    "document-viewer",
+    "pdf",
+    "docx",
+    "headless",
+    "typescript"
+  ],
+  "license": "UNLICENSED",
+  "author": "Veridox",
+  "homepage": "https://github.com/AndreiLocota/loupe#readme",
+  "bugs": {
+    "url": "https://github.com/AndreiLocota/loupe/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreiLocota/loupe.git",
+    "directory": "packages/viewer-core"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "tsup": "8.5.1",
+    "vitest": "1.6.1"
+  }
+}

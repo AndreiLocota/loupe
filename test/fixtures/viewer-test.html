@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viewer Test Fixture</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; }
+    #toolbar {
+      display: flex; gap: 8px; padding: 12px; background: #f5f5f5;
+      border-bottom: 1px solid #ddd; flex-wrap: wrap;
+    }
+    #toolbar button { padding: 6px 14px; cursor: pointer; }
+    #toolbar input[type="text"] { padding: 6px 10px; width: 200px; }
+    #status { padding: 6px 14px; font-size: 14px; color: #666; }
+    #viewer { flex: 1; overflow: hidden; position: relative; min-height: 300px; background: #e0e0e0; }
+    #error { color: #d32f2f; padding: 12px; display: none; }
+    #error.visible { display: block; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "pdfjs-dist": "/node_modules/pdfjs-dist/build/pdf.mjs",
+      "@veridox-ai/loupe-core": "/packages/viewer-core/dist/index.js",
+      "@veridox-ai/loupe-pdf": "/packages/viewer-pdf/dist/index.js",
+      "@veridox-ai/loupe-image": "/packages/viewer-image/dist/index.js",
+      "@veridox-ai/loupe-docx": "/packages/viewer-docx/dist/browser.js",
+      "@silurus/ooxml/docx": "/node_modules/@silurus/ooxml/dist/docx.mjs"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="btn-load">Load corpus PDF</button>
+    <button id="btn-close">Close</button>
+    <button id="btn-prev">Prev Page</button>
+    <span id="page-indicator">Page: -</span>
+    <button id="btn-next">Next Page</button>
+    <button id="btn-zoom-in">Zoom In</button>
+    <button id="btn-zoom-out">Zoom Out</button>
+    <button id="btn-zoom-fit">Fit Width</button>
+    <input type="text" id="search-input" placeholder="Search...">
+    <button id="btn-search">Search</button>
+    <span id="search-count"></span>
+    <span id="status">Idle</span>
+  </div>
+  <div id="error"></div>
+  <div id="viewer"></div>
+
+  <script type="module">
+    import { ViewerStore } from '/packages/viewer-core/dist/index.js';
+    import { createPdfAdapterFactory } from '/packages/viewer-pdf/dist/index.js';
+    import { createImageAdapterFactory } from '/packages/viewer-image/dist/index.js';
+    import { createDocxAdapterFactory } from '/packages/viewer-docx/dist/browser.js';
+
+    const store = new ViewerStore();
+    const workerSrc = '/node_modules/pdfjs-dist/build/pdf.worker.mjs';
+
+    // Register the real PDF adapter
+    const pdfFactory = createPdfAdapterFactory(workerSrc);
+    store.registerFactory(pdfFactory);
+
+    // Register the real image adapter (native/SVG/TIFF; the TIFF worker is a
+    // self-contained bundle). HEIC needs a bundler-resolved dynamic import and
+    // isn't exercised here.
+    store.registerFactory(createImageAdapterFactory({
+      tiffWorkerUrl: '/packages/viewer-image/dist/workers/tiff.worker.js',
+    }));
+
+    // Register the real DOCX adapter (browser bundle: jszip inlined;
+    // @silurus/ooxml stays external and resolves via the import map, so its
+    // wasm and worker assets load same-origin from node_modules).
+    store.registerFactory(createDocxAdapterFactory({
+      thumbnails: true,
+    }));
+
+    store.setMountElement(document.getElementById('viewer'));
+
+    store.subscribe((event) => {
+      document.getElementById('status').textContent = `Status: ${event.type}`;
+      if (event.type === 'page-change') {
+        document.getElementById('page-indicator').textContent = `Page: ${store.getState().currentPage}`;
+      }
+      if (event.type === 'search-change') {
+        document.getElementById('search-count').textContent =
+          event.matches.length > 0 ? `${event.matches.length} matches` : '';
+      }
+    });
+
+    const errorEl = document.getElementById('error');
+    store.subscribe((event) => {
+      if (event.type === 'error') {
+        errorEl.textContent = event.error.message;
+        errorEl.classList.add('visible');
+      }
+      if (event.type === 'status-change' && event.status !== 'error') {
+        errorEl.classList.remove('visible');
+      }
+    });
+
+    document.getElementById('btn-load').addEventListener('click', async () => {
+      document.getElementById('status').textContent = 'Loading...';
+      try {
+        const resp = await fetch('/corpus/production/multipage.pdf');
+        const data = await resp.arrayBuffer();
+        await store.loadDocument({ data });
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    document.getElementById('btn-close').addEventListener('click', () => {
+      store.closeDocument();
+      document.getElementById('page-indicator').textContent = 'Page: -';
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      store.goToPage(store.getState().currentPage - 1);
+    });
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+      store.goToPage(store.getState().currentPage + 1);
+    });
+
+    document.getElementById('btn-zoom-in').addEventListener('click', () => {
+      const z = store.getState().zoom;
+      store.setZoom(typeof z === 'number' ? Math.min(z + 0.5, 5) : 2);
+    });
+
+    document.getElementById('btn-zoom-out').addEventListener('click', () => {
+      const z = store.getState().zoom;
+      store.setZoom(typeof z === 'number' ? Math.max(z - 0.5, 0.5) : 1);
+    });
+
+    document.getElementById('btn-zoom-fit').addEventListener('click', () => {
+      store.setZoom('fit-width');
+    });
+
+    document.getElementById('btn-search').addEventListener('click', () => {
+      const query = document.getElementById('search-input').value;
+      store.search(query);
+    });
+
+    // Generic loader for tests: fetch any corpus path and load it through the
+    // real adapters. Returns the resolved status ('loaded' or 'error').
+    window.__load = async (path) => {
+      try {
+        const resp = await fetch(path);
+        const data = await resp.arrayBuffer();
+        await store.loadDocument({ data });
+      } catch { /* error is reflected in store state */ }
+      return store.getState().status;
+    };
+
+    window.__viewerStore = store;
+    window.__viewerReady = true;
+  </script>
+</body>
+</html>

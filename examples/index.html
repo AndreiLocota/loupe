@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loupe Document Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; overflow: hidden; }
+    #root { width: 100vw; height: 100vh; }
+    .loading { display: flex; align-items: center; justify-content: center; height: 100vh; color: #888; font-size: 14px; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "pdfjs-dist": "/node_modules/pdfjs-dist/build/pdf.mjs",
+      "@silurus/ooxml/docx": "/node_modules/@silurus/ooxml/dist/docx.mjs"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="root"><div class="loading">Loading viewer...</div></div>
+  <script type="module" src="./viewer-app.bundle.js"></script>
+</body>
+</html>

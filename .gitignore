@@ -1,33 +1,45 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-.output
-.vinxi
-.tanstack/**
-.nitro
-*.local
-
-# Wrangler / Cloudflare
-.wrangler/
-.dev.vars
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+node_modules/
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+# Per-branch review-triage ledger — session tooling, never shipped.
+.triage/
+.cache/
+.env.local
+.env.*.local
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.log
 
+# Per-developer Claude Code permissions — personal, never shared.
+.claude/settings.local.json
+
+# Compiler byproducts accidentally emitted into package sources (a stray tsc run
+# despite noEmit). Sources are .ts only; the sole hand-written ambient
+# declaration is negated so it stays tracked.
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+!packages/viewer-image/src/types.d.ts
+
+# Generated example assets — built on demand by `npm run build`, not committed
+# (same policy as dist/). Keeps the ~4MB of bundles/workers out of the repo.
+examples/viewer-app.bundle.js
+examples/iframeScript.js
+examples/workers/
+
+# npm pack output (local tarballs for consumer testing).
+*.tgz
+artifacts/
+
+# Malicious test corpus — generated on demand by scripts/generate-corpus.ts, never
+# committed. Avoids shipping functional exploit payloads (XSS SVGs, zip bombs,
+# path-traversal / javascript: / remote-beacon docs) in a public repo. CI and
+# `npm run test:security` regenerate them locally. All-synthetic, generated
+# production/ samples remain committed.
+corpus/malicious/

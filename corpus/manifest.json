@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "description": "Document corpus for Loupe Document Viewer testing",
+  "files": {
+    "production": {
+      "minimal.jpg": {
+        "format": "image",
+        "pages": 1,
+        "features": [
+          "format_detection",
+          "minimal_size"
+        ],
+        "description": "1x1 pixel JPEG, minimal valid structure",
+        "sha256": "8ea18ac99fd1f32b5dea2a552aa3de972ff8e638f3d3ebe77da401f7ee18e7a5"
+      },
+      "minimal.png": {
+        "format": "image",
+        "pages": 1,
+        "features": [
+          "format_detection",
+          "minimal_size"
+        ],
+        "description": "1x1 pixel PNG, minimal valid structure",
+        "sha256": "b94de5cd7401eb39bf23e46fb4eb428c782601cea3a7ed7269278b8a75c5fe37"
+      },
+      "minimal.gif": {
+        "format": "image",
+        "pages": 1,
+        "features": [
+          "format_detection",
+          "minimal_size"
+        ],
+        "description": "1x1 pixel GIF89a, minimal valid structure",
+        "sha256": "4e0705327480ad2323cb03d9c450ffcae4a98bf3a5382fa0c7882145ed620e49"
+      },
+      "minimal.tiff": {
+        "format": "image",
+        "pages": 1,
+        "features": [
+          "format_detection",
+          "tiff_decode"
+        ],
+        "description": "100x100 pixel grayscale TIFF, little-endian, single strip",
+        "sha256": "dcaac51d16e9113ad4971fef9e1e31a1e6d849dac6aeb0271d60da59f806551b"
+      },
+      "multipage.tiff": {
+        "format": "image",
+        "pages": 3,
+        "features": [
+          "tiff_decode",
+          "multipage",
+          "page_navigation",
+          "thumbnails"
+        ],
+        "description": "3-page grayscale TIFF (80x100) for multi-page image navigation and thumbnails",
+        "sha256": "aa5328a78a21fd4ffb3d3ff6de550fd55b0124bb51e1bc76d66866b2066fd59a"
+      },
+      "simple.svg": {
+        "format": "svg",
+        "pages": 1,
+        "features": [
+          "format_detection",
+          "svg_render",
+          "benign"
+        ],
+        "description": "Benign SVG with rect and text elements",
+        "sha256": "6c1145d5c0b0709541b550edea100cb398f9fc0187cd39331902b56cda6f4c39"
+      },
+      "simple.pdf": {
+        "format": "pdf",
+        "pages": 1,
+        "features": [
+          "format_detection",
+          "text_render"
+        ],
+        "description": "Single-page PDF with Helvetica 'Hello World' text",
+        "sha256": "4f2a25269d6f48ac6598d0801ee0ba976d8bc3491201f324c4d7dafbcb5647f7"
+      },
+      "multipage.pdf": {
+        "format": "pdf",
+        "pages": 3,
+        "features": [
+          "page_navigation",
+          "text_render",
+          "multipage"
+        ],
+        "description": "3-page PDF with 'Page One' through 'Page Three'",
+        "sha256": "aafe677086051b2a431f8279508eabd5e33fe9de5e5567a167f0c9f479b0f483"
+      },
+      "large-20page.pdf": {
+        "format": "pdf",
+        "pages": 20,
+        "features": [
+          "page_navigation",
+          "scroll_perf",
+          "large"
+        ],
+        "description": "20-page PDF for scroll performance and memory testing",
+        "sha256": "9dc665fd33d6da48fee0f8e70b5888f839d89334af6887fda8e9b097ea19c8e1"
+      },
+      "layers.pdf": {
+        "format": "pdf",
+        "pages": 1,
+        "features": [
+          "layers",
+          "optional_content_groups"
+        ],
+        "description": "Single-page PDF with two optional content groups (Blue rule, Watermark) for layer toggling",
+        "sha256": "3e44edc78fe9c041f4bdd72d8ba93edef0dc00f89adbb56a4e47d68a09cc94db"
+      },
+      "annotations.pdf": {
+        "format": "pdf",
+        "pages": 1,
+        "features": [
+          "annotations",
+          "markup",
+          "link"
+        ],
+        "description": "Single-page PDF with Square, FreeText, and Link annotations for annotation-layer toggling",
+        "sha256": "bcd804996585c9b8c8946dabb3e575c7a37b31288502ced18a6ba4aaad0842ae"
+      },
+      "simple.docx": {
+        "format": "docx",
+        "pages": [
+          1,
+          2
+        ],
+        "features": [
+          "format_detection",
+          "text_render"
+        ],
+        "description": "Simple DOCX with two paragraphs of text",
+        "sha256": "e7107aee943cce1c70cdbf70c13e46acc528db33a56b3a30209d0717a6c620fe"
+      },
+      "tables.docx": {
+        "format": "docx",
+        "pages": [
+          1,
+          2
+        ],
+        "features": [
+          "table_render",
+          "complex_layout"
+        ],
+        "description": "DOCX with a 2x2 table",
+        "sha256": "5d87ce9d6203365730cee5f243f28ee97f19ea7e77d4601eed277dc23d21cf42"
+      },
+      "search-repeats.docx": {
+        "format": "docx",
+        "pages": [
+          3,
+          4
+        ],
+        "features": [
+          "text_render",
+          "search_enumeration"
+        ],
+        "description": "DOCX with 'repeated search phrase' occurring 5 times, spread by filler paragraphs across multiple pages so stepping between matches scrolls and page tracking is exercised",
+        "sha256": "e65d380e65b043afb0f6ddd19393e3ea80bcf233b8a157d29b38a970e9e3b253"
+      }
+    },
+    "malicious": {
+      "svg-script.svg": {
+        "format": "svg",
+        "attack_vector": "embedded_javascript",
+        "expected": "Script must not execute. SVG renders inert via <img src=blob:>.",
+        "security_test": "no_script_execution",
+        "sha256": "ba2d5dca3594b9bd82c4f8d5de0576e4bff138b248c0172e933e853d5affb48c"
+      },
+      "svg-foreignobject.svg": {
+        "format": "svg",
+        "attack_vector": "html_injection_via_foreignobject",
+        "expected": "foreignObject content must not reach live DOM. Rendered inert.",
+        "security_test": "no_dom_injection",
+        "sha256": "f223a7da0cf5ff181d4e31470bbd58797a290fcb5c2183b13c83b07b120d7f89"
+      },
+      "svg-remote-refs.svg": {
+        "format": "svg",
+        "attack_vector": "remote_resource_loading",
+        "expected": "Zero network requests. All remote refs dropped.",
+        "security_test": "no_network_requests",
+        "sha256": "8c294101eac6398b7b73df784cb52d4b68a2bb19c60a4ff19a006b7fc7191123"
+      },
+      "docx-javascript-hyperlink.docx": {
+        "format": "docx",
+        "attack_vector": "javascript_uri_in_hyperlink",
+        "expected": "javascript: link stripped. No navigation or script execution.",
+        "security_test": "no_script_execution, no_navigation",
+        "sha256": "8d59d8e7c61cea89666ed16172da108a62ab145408684a2d5921fcee66a629ea"
+      },
+      "docx-remote-images.docx": {
+        "format": "docx",
+        "attack_vector": "remote_image_reference",
+        "expected": "Remote image dropped. Zero network requests.",
+        "security_test": "no_network_requests",
+        "sha256": "cc8a037932bbd0464d37981c35b1876cc7c9c825ea5fc74c927907675ccc4e7c"
+      },
+      "zipped-zero-bomb.zip": {
+        "format": "docx",
+        "attack_vector": "compression_bomb",
+        "expected": "Rejected by expansion ratio cap before full decompression.",
+        "security_test": "resource_exhaustion",
+        "sha256": "8114040aea255b792a1f1853b11e5e7d870d25fe17c296835e6a8e46f86cbc27"
+      },
+      "zip-path-traversal.zip": {
+        "format": "docx",
+        "attack_vector": "path_traversal_in_zip_entries",
+        "expected": "Rejected by path sanitization. '../' entries detected.",
+        "security_test": "path_sanitation",
+        "sha256": "2aed02be2114b91bedce613db9d5d2ab7852ab027e8f9f04814e66fa62d711b4"
+      },
+      "pdf-javascript-actions.pdf": {
+        "format": "pdf",
+        "attack_vector": "embedded_javascript_actions",
+        "expected": "OpenAction/doc-level/keystroke/link JS actions must never execute (pdfjs-dist GHSA-hq66-cqwq-w95j regression).",
+        "security_test": "no_script_execution",
+        "sha256": "0c82913e3d404bfded26d3d0b369bd0c7fed4671928de6ee24f79bbc7c48f160"
+      }
+    }
+  }
+}

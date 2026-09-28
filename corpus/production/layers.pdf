@@ -1,0 +1,47 @@
+%PDF-1.5
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R /OCProperties << /OCGs [5 0 R 6 0 R] /D << /Order [5 0 R 6 0 R] /ON [5 0 R 6 0 R] /OFF [] >> >> >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 300 200] /Contents 4 0 R /Resources << /Font << /F1 7 0 R >> /Properties << /OC1 5 0 R /OC2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 202 >>
+stream
+BT /F1 18 Tf 20 165 Td (Layered PDF sample) Tj ET
+/OC /OC1 BDC
+0 0 1 RG 4 w 20 30 m 280 30 l S
+BT /F1 14 Tf 20 45 Td (Layer: Blue rule) Tj ET
+EMC
+/OC /OC2 BDC
+BT /F1 32 Tf 40 95 Td (WATERMARK) Tj ET
+EMC
+endstream
+endobj
+5 0 obj
+<< /Type /OCG /Name (Blue rule) >>
+endobj
+6 0 obj
+<< /Type /OCG /Name (Watermark) >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000160 00000 n 
+0000000217 00000 n 
+0000000383 00000 n 
+0000000636 00000 n 
+0000000686 00000 n 
+0000000736 00000 n 
+trailer << /Size 8 /Root 1 0 R >>
+startxref
+806
+%%EOF

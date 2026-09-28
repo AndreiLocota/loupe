@@ -1,31 +1,50 @@
 {
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "eslint.config.js"],
   "compilerOptions": {
     "target": "ES2022",
-    "jsx": "react-jsx",
     "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-
-    "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
-
-    "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedSideEffectImports": true,
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+      "@veridox-ai/loupe-core": [
+        "./packages/viewer-core/src"
+      ],
+      "@veridox-ai/loupe-pdf": [
+        "./packages/viewer-pdf/src"
+      ],
+      "@veridox-ai/loupe-docx": [
+        "./packages/viewer-docx/src"
+      ],
+      "@veridox-ai/loupe-image": [
+        "./packages/viewer-image/src"
+      ],
+      "@veridox-ai/loupe-react": [
+        "./packages/viewer-react/src"
+      ]
+    },
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "corpus",
+    "examples",
+    "site"
+  ]
 }
-
