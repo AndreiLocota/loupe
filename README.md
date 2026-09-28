@@ -2,7 +2,7 @@
 
 A headless document viewer library for **PDF, DOCX, and images**. Rendering happens in the browser; no Loupe server, API key, or account is needed at runtime. Your app provides the toolbar and surrounding interface. TypeScript core, optional React bindings.
 
-[Try Loupe](https://tryloupe.lovable.app/) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/tag/library-preview-2026-09-28)
+[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/tag/library-preview-2026-09-28)
 
 ## From the demo to your app
 
@@ -78,7 +78,7 @@ npm run verify:packages
 
 For browser checks, run `npx playwright install chromium firefox`, then `npm run test:browser`. Additional security and visual suites are described in [CONTRIBUTING.md](CONTRIBUTING.md). A GitHub Actions template is saved as `docs/ci-workflow.yml`; automation is not active because the current GitHub login lacks permission to add workflows. `npm run dev:packages` watches library source during development.
 
-For the saved website, enter `site/`, then run `bun install --frozen-lockfile` and `bun run dev`. The upload experience lives at `/`, the integration guide at `/developers`, and the previous landing page is preserved at `/original`. `/try` remains a compatibility route. It is not automatically synchronized with Lovable.
+For the saved website, enter `site/`, then run `bun install --frozen-lockfile` and `bun run dev`. The upload experience lives at `/`, the multi-format playground at `/playground`, the integration guide at `/developers`, and the previous landing page is preserved at `/original`. `/try` remains a compatibility route. It is not automatically synchronized with Lovable.
 
 ## License and distribution status
 

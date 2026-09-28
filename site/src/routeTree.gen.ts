@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as OriginalRouteImport } from './routes/original'
+import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as TryRouteImport } from './routes/try'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const OriginalRoute = OriginalRouteImport.update({
   path: '/original',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlaygroundRoute = PlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TryRoute = TryRouteImport.update({
   id: '/try',
   path: '/try',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/developers': typeof DevelopersRoute
   '/original': typeof OriginalRoute
+  '/playground': typeof PlaygroundRoute
   '/try': typeof TryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/developers': typeof DevelopersRoute
   '/original': typeof OriginalRoute
+  '/playground': typeof PlaygroundRoute
   '/try': typeof TryRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/developers': typeof DevelopersRoute
   '/original': typeof OriginalRoute
+  '/playground': typeof PlaygroundRoute
   '/try': typeof TryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/developers' | '/original' | '/try'
+  fullPaths: '/' | '/developers' | '/original' | '/playground' | '/try'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/developers' | '/original' | '/try'
-  id: '__root__' | '/' | '/developers' | '/original' | '/try'
+  to: '/' | '/developers' | '/original' | '/playground' | '/try'
+  id: '__root__' | '/' | '/developers' | '/original' | '/playground' | '/try'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DevelopersRoute: typeof DevelopersRoute
   OriginalRoute: typeof OriginalRoute
+  PlaygroundRoute: typeof PlaygroundRoute
   TryRoute: typeof TryRoute
 }
 
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OriginalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playground': {
+      id: '/playground'
+      path: '/playground'
+      fullPath: '/playground'
+      preLoaderRoute: typeof PlaygroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/try': {
       id: '/try'
       path: '/try'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DevelopersRoute: DevelopersRoute,
   OriginalRoute: OriginalRoute,
+  PlaygroundRoute: PlaygroundRoute,
   TryRoute: TryRoute,
 }
 export const routeTree = rootRouteImport

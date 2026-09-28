@@ -10,6 +10,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# Vendored compiled Loupe packages must be committed.
+!vendor/*/dist/
+!vendor/*/dist/**
 .output
 .vinxi
 .tanstack/**
@@ -19,6 +22,10 @@ dist-ssr
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+
+# Runtime workers copied by predev/prebuild from the pinned vendored adapters.
+public/loupe/pdf.worker.js
+public/loupe/tiff.worker.js
 
 # Editor directories and files
 .vscode/*
@@ -30,4 +37,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-

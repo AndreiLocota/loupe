@@ -4,6 +4,7 @@ Routes:
 
 - `/` — Loupe homepage: the interactive Word (.docx/.docm) inspector. Open a file or a sample to see the real Loupe viewer with retained comments, tracked changes, findings and timeline. Everything runs in the browser.
 - `/try` — legacy alias, redirects to `/`.
+- `/playground` — multi-format document workspace with real PDF, Word, TIFF and image samples, local file tabs, capability-aware controls and integration excerpts.
 - `/developers` — integration-first page (quick start, install, API excerpt, format support, runtime assets). Links and access state come from `src/lib/release.ts`; flip `PUBLIC_LIBRARY_AVAILABLE` (and `LICENSE_SUMMARY`) when the repository goes public.
 - `/original` — archived first developer site (noindex), kept unchanged for reference.
 
@@ -11,11 +12,11 @@ Routes:
 
 ```sh
 bun install --frozen-lockfile
-bun run dev      # predev copies the DOCX engine WASM to public/loupe/
+bun run dev      # predev copies document runtime assets to public/loupe/
 bun run build    # prebuild does the same
 ```
 
-`scripts/copy-loupe-assets.mjs` copies `docx_parser_bg.wasm` from the installed `@silurus/ooxml` so the served WASM always matches the engine version.
+`scripts/copy-loupe-assets.mjs` copies `docx_parser_bg.wasm` from the installed `@silurus/ooxml` so the served WASM always matches the engine version. It also copies the vendored PDF and TIFF workers, adding the PDF browser compatibility shim to the generated worker.
 
 ## Notes for the inspector
 
@@ -26,8 +27,8 @@ bun run build    # prebuild does the same
 
 ## Website and GitHub export
 
-Live site: https://tryloupe.lovable.app/ — developer guide at `/developers`.
+Live site: https://tryloupe.lovable.app/ — developer guide at `/developers`, multi-format demo at `/playground`.
 
-Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `9f4043801598b80220fc3af551caa3b6e71085c4`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
+Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `acc5cf67de7782ef15324e9734b43c37efd3d95a`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
 
 The background asset is included under `public/__l5e/assets-v1/` so this export can run independently of Lovable asset hosting.

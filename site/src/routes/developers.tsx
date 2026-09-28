@@ -127,27 +127,35 @@ function DevelopersPage() {
               for developers
             </span>
           </span>
-          <Link
-            to="/"
-            className="focus-ring rounded-md bg-cobalt px-3 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Try Loupe
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/playground" className="focus-ring text-sm font-medium text-cobalt">
+              Playground
+            </Link>
+            <Link
+              to="/"
+              className="focus-ring rounded-md bg-cobalt px-3 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Try Loupe
+            </Link>
+          </div>
         </div>
       </header>
 
       <section className="relative overflow-hidden border-b border-border">
         <div aria-hidden className="grid-backdrop absolute inset-0 opacity-60" />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-transparent to-background"
+        />
         <div className="relative mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
           <p className="eyebrow">Loupe for developers</p>
           <h1 className="mt-3 max-w-2xl text-3xl leading-[1.1] font-semibold sm:text-5xl">
             Add document viewing to your app.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            A headless TypeScript core that renders PDF, DOCX and images in the browser, with optional
-            React bindings. You build the interface. No hosted API account, key or backend is required
-            at runtime.
+            A headless TypeScript core that renders PDF, DOCX and images in the browser, with
+            optional React bindings. You build the interface. No hosted API account, key or backend
+            is required at runtime.
           </p>
           <nav aria-label="On this page" className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm">
             {NAV.map((n) => (
@@ -189,8 +197,8 @@ function DevelopersPage() {
           </p>
           <CodePanel code={INSTALL_COMMAND} label="In your application" />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Loupe is a five-package workspace, so it is not installed from a public npm scope or with{" "}
-            <code className="font-mono">npm install AndreiLocota/loupe</code>.
+            Loupe is a five-package workspace, so it is not installed from a public npm scope or
+            with <code className="font-mono">npm install AndreiLocota/loupe</code>.
           </p>
           <ul className="mt-5 space-y-2 text-sm">
             <li>
@@ -226,7 +234,10 @@ function DevelopersPage() {
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             The browser demo currently accepts Word files only; the local reference viewer handles
             every supported format.{" "}
-            <Link to="/" className="focus-ring font-medium text-cobalt underline-offset-4 hover:underline">
+            <Link
+              to="/"
+              className="focus-ring font-medium text-cobalt underline-offset-4 hover:underline"
+            >
               Back to the demo
             </Link>
           </p>
@@ -236,17 +247,22 @@ function DevelopersPage() {
           <H2 id="api" eyebrow="API" title="Adapter setup excerpt" />
           <CodePanel code={API_SNIPPET} label="Excerpt — adapter setup, not a complete app" />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            This only registers the DOCX adapter on a viewer store. For a complete runnable viewer see{" "}
-            <Ext href={EXAMPLE_URL}>examples/viewer-app.tsx</Ext>. APIs are pre-1.0 and can change.
+            This only registers the DOCX adapter on a viewer store. For a complete runnable viewer
+            see <Ext href={EXAMPLE_URL}>examples/viewer-app.tsx</Ext>. APIs are pre-1.0 and can
+            change.
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {API_CARDS.map((c) => (
               <div key={c.symbol} className="rounded-xl border border-border bg-card p-4">
                 <p className="flex items-baseline justify-between gap-2">
-                  <code className="font-mono text-[0.8125rem] font-medium text-cobalt">{c.symbol}</code>
+                  <code className="font-mono text-[0.8125rem] font-medium text-cobalt">
+                    {c.symbol}
+                  </code>
                   <span className="eyebrow">{c.kind}</span>
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {c.description}
+                </p>
                 {c.members ? (
                   <p className="mt-2 font-mono text-[0.6875rem] leading-relaxed text-navy-soft">
                     {c.members.join(" · ")}
@@ -275,9 +291,15 @@ function DevelopersPage() {
               <caption className="sr-only">Feature support by document format in Loupe</caption>
               <thead>
                 <tr className="border-b border-border">
-                  <th scope="col" className="p-3 text-left text-xs font-semibold">Format</th>
+                  <th scope="col" className="p-3 text-left text-xs font-semibold">
+                    Format
+                  </th>
                   {MATRIX_COLUMNS.map((c) => (
-                    <th key={c} scope="col" className="p-3 text-center text-xs font-medium text-muted-foreground">
+                    <th
+                      key={c}
+                      scope="col"
+                      className="p-3 text-center text-xs font-medium text-muted-foreground"
+                    >
                       {c}
                     </th>
                   ))}
@@ -312,7 +334,10 @@ function DevelopersPage() {
           <details className="group rounded-xl border border-border bg-card">
             <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-sm font-medium">
               Workers and WASM your application serves
-              <ChevronDown className="size-4 transition-transform group-open:rotate-180" aria-hidden />
+              <ChevronDown
+                className="size-4 transition-transform group-open:rotate-180"
+                aria-hidden
+              />
             </summary>
             <ul className="grid gap-4 border-t border-border p-5 sm:grid-cols-2">
               {RUNTIME_ASSETS.map((a) => (
