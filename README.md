@@ -24,7 +24,7 @@ bun run build    # prebuild does the same
 
 ## GitHub copy
 
-This private repository is an export of Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `5ee384132ca345cc206929a8a01d7d9b590a2cfc` (28 September 2026). The first commit preserves the original developer landing page; the next adds `/try`.
+This private repository is an export of Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `dc2f75894fab4a4101908b9ec9438c32424abe6b` (28 September 2026). The first commit preserves the original developer landing page; the next adds `/try`.
 
 This copy is not yet connected to automatic Lovable/GitHub synchronization. Lovable remains the editing authority. Connect the project through Lovable's GitHub settings before relying on automatic updates.
 

@@ -174,9 +174,9 @@ export function TryLanding({ onFile, onSample, busy, pending, error, failedSampl
       <footer className="relative px-6 pb-5 sm:px-10">
         <Link
           to="/"
-          className="focus-ring inline-flex items-center rounded-full bg-card/85 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur transition-colors hover:bg-card"
+          className="focus-ring text-sm font-semibold text-navy underline-offset-4 [text-shadow:0_0_6px_var(--card),0_0_2px_var(--card)] hover:underline"
         >
-          Loupe for Developers →
+          Loupe for Developers / API docs →
         </Link>
       </footer>
     </div>
