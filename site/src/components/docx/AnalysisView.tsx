@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Moon, Sun, UploadCloud, History } from "lucide-react";
 import type { DocxAnalysis } from "@/lib/docx/types";
@@ -72,7 +73,15 @@ export function AnalysisView({ analysis, file, onReset, dark, onToggleDark, sour
           {meta.lastModifiedBy ?? meta.creator ?? "unknown author"}
           {meta.modified ? ` · ${new Date(meta.modified).toLocaleDateString()}` : ""}
         </span>
-        <BuiltWithLoupe className="ml-auto hidden shrink-0 sm:block" />
+        <BuiltWithLoupe className="ml-auto hidden shrink-0 md:block" />
+        <Link
+          to="/developers"
+          className="shrink-0 rounded-sm text-xs font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:ml-0 ml-auto"
+        >
+          <span className="sm:hidden">Developers</span>
+          <span className="hidden sm:inline">For developers →</span>
+        </Link>
+
         <button
           onClick={onToggleDark}
           aria-label="Toggle dark mode"

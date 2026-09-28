@@ -82,8 +82,7 @@ export function TryLanding({ onFile, onSample, busy, pending, error, failedSampl
             Look closer at your documents.
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Open a Word file to view it page by page, alongside any comments and tracked changes it
-            still carries.
+            Try Loupe’s document viewer with a Word file. Everything runs in your browser.
           </p>
 
           <input
@@ -173,10 +172,10 @@ export function TryLanding({ onFile, onSample, busy, pending, error, failedSampl
 
       <footer className="relative px-6 pb-5 sm:px-10">
         <Link
-          to="/"
+          to="/developers"
           className="focus-ring text-sm font-semibold text-navy underline-offset-4 [text-shadow:0_0_6px_var(--card),0_0_2px_var(--card)] hover:underline"
         >
-          Loupe for Developers / API docs →
+          Use Loupe in your app →
         </Link>
       </footer>
     </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-/**
- * Discreet, opt-in explanation of what the underlying renderer does versus
- * what this particular app adds on top. No access flow, no promises.
- */
+/** Explains what the Loupe library does versus what this Word inspector adds. */
 export function BuiltWithLoupe({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -29,34 +27,32 @@ export function BuiltWithLoupe({ className }: { className?: string }) {
         <DialogHeader>
           <DialogTitle className="text-base font-medium">Built with Loupe</DialogTitle>
           <DialogDescription className="text-xs leading-relaxed">
-            How this page is put together.
+            What the viewer does, and what this inspector adds.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
           <p>
-            Loupe renders the document itself. Everything to do with the page — laying out and
-            drawing each page, searching the text and stepping between matches, selecting text,
-            zooming, moving between pages, page thumbnails, and the geometry that says where a piece
-            of text sits — comes from it. It has no interface of its own.
+            <strong className="font-medium text-foreground">The Loupe viewer</strong> renders the
+            document: laying out and drawing pages, search and stepping between matches, text
+            selection, zoom, page navigation, thumbnails, and the geometry that says where text sits.
+            It has no interface of its own.
           </p>
           <p>
-            Everything around the document was built for this app: the single-screen layout, reading
-            the file&apos;s stored details and any retained evidence, the timeline, the comment
-            callouts, and the review marks and their export. The callouts simply display comments
-            that are already saved inside your Word file, placed using Loupe&apos;s geometry. The
-            review marks are new notes you add here and are kept only in this browser session until
-            you export them. Neither one is written back into your Word file, which is never
-            modified.
-          </p>
-
-          <p>
-            Loupe reads other document formats through separate adapters, but this particular demo
-            accepts supported Word files only.
+            <strong className="font-medium text-foreground">This Word inspector</strong> is a demo
+            application built on top: the layout, stored details, retained comments and tracked
+            changes, the timeline, findings and review marks with export. These are not part of the
+            library API. Review marks stay in this browser session; your Word file is never modified.
           </p>
           <p>
-            Raw comments and stored properties stay readable and copyable in the findings panel.
-            Developer access to Loupe is not publicly available yet.
+            This browser demo accepts Word files only. The library also handles PDF and images.
           </p>
+          <Link
+            to="/developers"
+            onClick={() => setOpen(false)}
+            className="inline-block font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Use Loupe in your app →
+          </Link>
         </div>
       </DialogContent>
     </Dialog>

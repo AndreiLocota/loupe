@@ -12,3 +12,14 @@
 - `npm audit --omit=dev`: zero reported production dependency vulnerabilities at validation time. Existing dev-tool advisories are not addressed in this packaging change.
 
 Library source and tests match upstream revision in `provenance.md`. The saved website was moved to `site/` without changing its source. No public npm publication, license replacement or website deployment was performed.
+
+## Website journey update
+
+The upload-first homepage and integration guide were subsequently published to https://tryloupe.lovable.app/. The previous developer homepage is preserved at `/original` with `noindex`; `/try` redirects to `/`. Exported Lovable revision: `9f4043801598b80220fc3af551caa3b6e71085c4`.
+
+- Website frozen-lockfile Bun install, TypeScript check and production build passed.
+- Browser verification at 1440×900 and 390×844: homepage fits, both Word samples render real document canvases, developer links work from landing/viewer, return link works, developer page has no horizontal overflow, and demo dark mode is cleaned up.
+- Archive deep link and noindex metadata verified; `/try` redirects correctly.
+- No browser page errors observed.
+- Library lint and TypeScript rechecked; zero errors, same 23 upstream lint warnings. Library runtime code is unchanged, so its previous unit/integration results above still describe that code.
+- GitHub metadata and README now link back to the canonical demo and guide. Repository and package archives remain private pending the owner's reuse-terms decision; the website explicitly labels restricted links.

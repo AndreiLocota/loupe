@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevelopersRouteImport } from './routes/developers'
+import { Route as OriginalRouteImport } from './routes/original'
 import { Route as TryRouteImport } from './routes/try'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevelopersRoute = DevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OriginalRoute = OriginalRouteImport.update({
+  id: '/original',
+  path: '/original',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TryRoute = TryRouteImport.update({
@@ -25,27 +37,35 @@ const TryRoute = TryRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/developers': typeof DevelopersRoute
+  '/original': typeof OriginalRoute
   '/try': typeof TryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/developers': typeof DevelopersRoute
+  '/original': typeof OriginalRoute
   '/try': typeof TryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/developers': typeof DevelopersRoute
+  '/original': typeof OriginalRoute
   '/try': typeof TryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/try'
+  fullPaths: '/' | '/developers' | '/original' | '/try'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/try'
-  id: '__root__' | '/' | '/try'
+  to: '/' | '/developers' | '/original' | '/try'
+  id: '__root__' | '/' | '/developers' | '/original' | '/try'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DevelopersRoute: typeof DevelopersRoute
+  OriginalRoute: typeof OriginalRoute
   TryRoute: typeof TryRoute
 }
 
@@ -56,6 +76,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/developers': {
+      id: '/developers'
+      path: '/developers'
+      fullPath: '/developers'
+      preLoaderRoute: typeof DevelopersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/original': {
+      id: '/original'
+      path: '/original'
+      fullPath: '/original'
+      preLoaderRoute: typeof OriginalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/try': {
@@ -70,6 +104,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DevelopersRoute: DevelopersRoute,
+  OriginalRoute: OriginalRoute,
   TryRoute: TryRoute,
 }
 export const routeTree = rootRouteImport

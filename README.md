@@ -2,6 +2,14 @@
 
 A headless document viewer library for **PDF, DOCX, and images**. Rendering happens in the browser; no Loupe server, API key, or account is needed at runtime. Your app provides the toolbar and surrounding interface. TypeScript core, optional React bindings.
 
+[Try Loupe](https://tryloupe.lovable.app/) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/tag/library-preview-2026-09-28)
+
+## From the demo to your app
+
+The browser demo is a Word inspector built with Loupe. Loupe supplies document rendering, page navigation, zoom, text selection and search. The inspector adds its own retained-change findings, comments panel and timeline; those application features are not part of the library API.
+
+To try the library itself, run the reference viewer below. It opens PDF, DOCX and images. To embed it in your product, install Core plus the format adapters you need, then use the [integration guide](docs/getting-started.md) and [working React example](examples/viewer-app.tsx). The API is JavaScript/TypeScript running in your browser, not a hosted HTTP service.
+
 ## Try the library
 
 Use Node.js 24 LTS and npm. With access to this repository:
@@ -55,7 +63,7 @@ The JavaScript API is the interface used by your code, not a hosted HTTP service
 - `examples/` — working React reference viewer.
 - `docs/` — integration, architecture, runtime assets and security guidance.
 - `corpus/production/` — synthetic documents for testing.
-- `site/` — preserved developer landing page and interactive `/try` website, with its own Bun dependencies. It is an independent Lovable export, not part of the npm workspace.
+- `site/` — Loupe website, with its own Bun dependencies. It is an independent Lovable export, not part of the npm workspace.
 
 ## Development
 
@@ -70,7 +78,7 @@ npm run verify:packages
 
 For browser checks, run `npx playwright install chromium firefox`, then `npm run test:browser`. Additional security and visual suites are described in [CONTRIBUTING.md](CONTRIBUTING.md). A GitHub Actions template is saved as `docs/ci-workflow.yml`; automation is not active because the current GitHub login lacks permission to add workflows. `npm run dev:packages` watches library source during development.
 
-For the saved website, enter `site/`, then run `bun install --frozen-lockfile` and `bun run dev`. It retains the original `/` and the new `/try` route. It is not automatically synchronized with Lovable.
+For the saved website, enter `site/`, then run `bun install --frozen-lockfile` and `bun run dev`. The upload experience lives at `/`, the integration guide at `/developers`, and the previous landing page is preserved at `/original`. `/try` remains a compatibility route. It is not automatically synchronized with Lovable.
 
 ## License and distribution status
 
