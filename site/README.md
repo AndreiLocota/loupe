@@ -4,7 +4,7 @@ Routes:
 
 - `/` — Loupe homepage: the interactive Word (.docx/.docm) inspector. Open a file or a sample to see the real Loupe viewer with retained comments, tracked changes, findings and timeline. Everything runs in the browser.
 - `/try` — legacy alias, redirects to `/`.
-- `/playground` — multi-format document workspace with real PDF, Word, TIFF and image samples, local file tabs, capability-aware controls and integration excerpts.
+- `/playground` — multi-format document workspace with eight real sample formats (PDF, DOCX, TIFF, PNG, JPEG, WebP, GIF and SVG), local file tabs, capability-aware controls and integration excerpts. Its top toolbar includes page jumping, zoom presets, fit controls, rotation, layers/notes/marker shortcuts, fullscreen and original-file download.
 - `/developers` — integration-first page (quick start, install, API excerpt, format support, runtime assets). Links and access state come from `src/lib/release.ts`; flip `PUBLIC_LIBRARY_AVAILABLE` (and `LICENSE_SUMMARY`) when the repository goes public.
 - `/original` — archived first developer site (noindex), kept unchanged for reference.
 
@@ -29,6 +29,6 @@ bun run build    # prebuild does the same
 
 Live site: https://tryloupe.lovable.app/ — developer guide at `/developers`, multi-format demo at `/playground`.
 
-Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `acc5cf67de7782ef15324e9734b43c37efd3d95a`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
+Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `cba2c8a256547e5cac77c037c521d1b9bd4fd5c1`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
 
 The background asset is included under `public/__l5e/assets-v1/` so this export can run independently of Lovable asset hosting.

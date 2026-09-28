@@ -884,3 +884,152 @@
     grid-template-columns: minmax(0, 1fr) 320px;
   }
 }
+
+/* ---- Expanded toolbar, overflowing sample tabs, fullscreen ---- */
+.pg-tab-scroll {
+  flex-shrink: 0;
+  padding: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  color: var(--pg-blue);
+  background: white;
+}
+.pg-tab-scroll[hidden] {
+  display: none;
+}
+.pg-tabs {
+  scrollbar-width: thin;
+}
+.pg-tabs.fade-right {
+  mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+}
+.pg-tabs.fade-left {
+  mask-image: linear-gradient(90deg, transparent, #000 36px);
+}
+.pg-tabs.fade-left.fade-right {
+  mask-image: linear-gradient(90deg, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+}
+.pg-toolbar {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+.pg-tools {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
+  row-gap: 4px;
+  gap: 4px;
+}
+.pg-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 8px;
+  margin-right: 4px;
+  border-right: 1px solid #e6ebf2;
+  flex-shrink: 0;
+}
+.pg-group:last-child {
+  border-right: 0;
+}
+.pg-tools button:focus-visible,
+.pg-tools select:focus-visible,
+.pg-tools input:focus-visible,
+.pg-tab-scroll:focus-visible {
+  outline: 2px solid var(--pg-blue);
+  outline-offset: 1px;
+}
+.pg-tools button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pg-page-jump {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.pg-page-jump input {
+  width: 34px;
+  text-align: center;
+  padding: 4px 2px;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  background: white;
+  font: inherit;
+}
+.pg-page-jump input[aria-invalid="true"] {
+  border-color: #d93a3a;
+  color: #b42323;
+}
+.pg-zoom-select {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  padding: 4px 4px;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  background: white;
+  color: inherit;
+}
+.pg-text-tool {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 31px;
+}
+.pg-tools .pg-download {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pg-panel-content h3[tabindex="-1"]:focus-visible,
+.pg-code-heading strong:focus-visible {
+  outline: 2px solid var(--pg-blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.pg-shell.is-fullscreen {
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+.pg-shell.is-fullscreen .pg-body {
+  flex: 1;
+  height: auto;
+  max-height: none;
+  min-height: 0;
+}
+@media (max-width: 760px) {
+  .pg-tools {
+    flex: 1 1 0;
+    max-width: calc(100% - 48px);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+    padding-bottom: 2px;
+  }
+  .pg-group {
+    padding-right: 4px;
+    margin-right: 2px;
+  }
+  .pg-tools .pg-download span {
+    display: none;
+  }
+  .pg-tab-scroll {
+    margin-bottom: 9px;
+    padding: 5px;
+  }
+  .pg-shell.is-fullscreen .pg-body {
+    overflow: auto;
+  }
+}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="Helvetica, Arial, sans-serif">
+  <title>Fieldwork route diagram</title>
+  <rect width="960" height="600" fill="#f7f9fd"/>
+  <g stroke="#e3e9f3" stroke-width="1">
+    <path d="M0 100H960M0 200H960M0 300H960M0 400H960M0 500H960M120 0V600M240 0V600M360 0V600M480 0V600M600 0V600M720 0V600M840 0V600"/>
+  </g>
+  <text x="56" y="70" font-size="13" letter-spacing="2" fill="#2457ff" font-weight="700">FIELDWORK / ROUTE 03</text>
+  <text x="56" y="108" font-size="30" fill="#081b3d" font-weight="700">Survey route, day two</text>
+  <text x="56" y="136" font-size="14" fill="#5b6b85">Synthetic vector diagram. Scales crisply at every zoom level.</text>
+  <path d="M130 470 C 230 380, 300 470, 400 360 S 560 250, 640 320 S 790 420, 850 210" fill="none" stroke="#2457ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 12"/>
+  <g fill="#fff" stroke="#081b3d" stroke-width="3">
+    <circle cx="130" cy="470" r="14"/><circle cx="400" cy="360" r="14"/><circle cx="640" cy="320" r="14"/>
+  </g>
+  <circle cx="850" cy="210" r="18" fill="#2457ff"/>
+  <g font-size="14" fill="#081b3d" font-weight="600">
+    <text x="100" y="510">A · Base camp</text><text x="360" y="400">B · Ridge</text>
+    <text x="600" y="360">C · Stream</text><text x="790" y="180">D · Station</text>
+  </g>
+  <rect x="56" y="540" width="848" height="1" fill="#c9d3e3"/>
+  <text x="56" y="570" font-size="12" fill="#5b6b85">0 — 1 km</text>
+  <text x="904" y="570" font-size="12" fill="#5b6b85" text-anchor="end">01 / 01</text>
+</svg>

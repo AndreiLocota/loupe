@@ -8,15 +8,20 @@ import {
   ChevronRight,
   Code2,
   Copy,
+  Download,
   FileText,
   Image as ImageIcon,
   Layers,
   Loader2,
   Maximize,
+  Maximize2,
+  Minimize2,
+  MoveHorizontal,
   MessageSquare,
   MousePointer2,
   PanelLeft,
   Plus,
+  RotateCcw,
   RotateCw,
   Search,
   ShieldCheck,
@@ -77,14 +82,55 @@ const SAMPLES: Entry[] = [
   },
   {
     id: "image",
-    label: "Image",
+    label: "PNG scan",
     name: "Fieldwork-scan.png",
     kind: "image",
     url: "/playground/fieldwork-scan.png",
     note: "The same familiar viewer for a standalone image.",
     action: "Take a closer look",
   },
+  {
+    id: "jpeg",
+    label: "JPEG detail",
+    name: "Fieldwork-detail.jpg",
+    kind: "image",
+    url: "/playground/fieldwork-detail.jpg",
+    note: "A compressed JPEG crop of the scan. Zoom in on the detail.",
+    action: "Take a closer look",
+  },
+  {
+    id: "webp",
+    label: "WebP sideways",
+    name: "Fieldwork-sideways.webp",
+    kind: "image",
+    url: "/playground/fieldwork-sideways.webp",
+    note: "A WebP crop saved on its side. Fit it to the width.",
+    action: "Fit to width",
+  },
+  {
+    id: "gif",
+    label: "GIF still",
+    name: "Fieldwork-mono.gif",
+    kind: "image",
+    url: "/playground/fieldwork-mono.gif",
+    note: "A static, 32-colour GIF. Same viewer, same controls.",
+    action: "View at actual size",
+  },
+  {
+    id: "svg",
+    label: "SVG diagram",
+    name: "Route-diagram.svg",
+    kind: "image",
+    url: "/playground/route-diagram.svg",
+    note: "A vector route diagram. It stays sharp at 400%.",
+    action: "Zoom to 400%",
+  },
 ];
+const ZOOM_PRESETS = [25, 50, 75, 100, 150, 200, 300, 400];
+const extOf = (name: string) => {
+  const ext = name.split(".").pop()?.toUpperCase() ?? "";
+  return ext === "JPG" ? "JPEG" : ext === "TIF" ? "TIFF" : ext;
+};
 type Panel = "features" | "code";
 const CAPTIONS: Record<string, string> = {
   search: "Search text",
@@ -162,6 +208,15 @@ export default function Playground() {
   const [copied, setCopied] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [sidebar, setSidebar] = useState(false);
+  const [pageDraft, setPageDraft] = useState("");
+  const [pageInvalid, setPageInvalid] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [tabOverflow, setTabOverflow] = useState({ left: false, right: false });
+  const [downloading, setDownloading] = useState(false);
+  const [, setRevealTick] = useState(0);
+  const shell = useRef<HTMLElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const focusTarget = useRef<string | null>(null);
   const mount = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const sequence = useRef(0);
@@ -255,6 +310,122 @@ export default function Playground() {
     void open(SAMPLES[0]!);
   }, [open]);
 
+  // Keep the page field in sync with the viewer unless the user is typing.
+  useEffect(() => {
+    setPageDraft(loaded ? String(current) : "");
+    setPageInvalid(false);
+  }, [current, loaded]);
+
+  // Fullscreen state follows the browser (Esc, system gestures, errors).
+  useEffect(() => {
+    const sync = () => setFullscreen(document.fullscreenElement === shell.current);
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, []);
+
+  // Tab strip overflow indicators + active tab scrolled into view.
+  const measureTabs = useCallback(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    setTabOverflow({
+      left: el.scrollLeft > 2,
+      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2,
+    });
+  }, []);
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    measureTabs();
+    const ro = new ResizeObserver(measureTabs);
+    ro.observe(el);
+    el.addEventListener("scroll", measureTabs, { passive: true });
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("scroll", measureTabs);
+    };
+  }, [measureTabs]);
+  useEffect(() => {
+    const tab = document.getElementById(`pg-tab-${active.id}`);
+    const el = tabsRef.current;
+    if (tab && el) {
+      const t = tab.getBoundingClientRect();
+      const box = el.getBoundingClientRect();
+      if (t.left < box.left + 24) el.scrollBy({ left: t.left - box.left - 40 });
+      else if (t.right > box.right - 24) el.scrollBy({ left: t.right - box.right + 40 });
+    }
+    measureTabs();
+    // Reveal only on selection / tab-list changes — never on overflow state,
+    // otherwise manual scrolling snaps back to the selected tab.
+  }, [active.id, entries.length, measureTabs]);
+
+  // After opening the sidebar from a toolbar shortcut, reveal and focus the group.
+  useEffect(() => {
+    const id = focusTarget.current;
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    focusTarget.current = null;
+    el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    el.focus({ preventScroll: true });
+  });
+  function reveal(target: "pg-layers" | "pg-notes" | "pg-code", nextPanel: Panel) {
+    setPanel(nextPanel);
+    setSidebar(true);
+    focusTarget.current = target;
+    setRevealTick((t) => t + 1);
+  }
+
+  function jumpToPage(e: React.FormEvent) {
+    e.preventDefault();
+    const n = Number(pageDraft);
+    if (!Number.isInteger(n) || n < 1 || n > pages) {
+      setPageInvalid(true);
+      setMessage(`Enter a page from 1 to ${pages}.`);
+      return;
+    }
+    setPageInvalid(false);
+    store.goToPage(n);
+  }
+
+  async function toggleFullscreen() {
+    const el = shell.current;
+    if (!el) return;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (document.fullscreenEnabled && el.requestFullscreen) await el.requestFullscreen();
+      else setMessage("Fullscreen isn’t available in this browser.");
+    } catch {
+      setMessage("Fullscreen was blocked by the browser.");
+    }
+  }
+
+  async function downloadOriginal() {
+    setDownloading(true);
+    let href = "";
+    try {
+      let blob: Blob;
+      if (active.file) blob = active.file;
+      else {
+        const response = await fetch(active.url!);
+        if (!response.ok) throw Error();
+        blob = await response.blob();
+      }
+      href = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = active.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setMessage(`Downloaded the original ${active.name}. View changes aren’t included.`);
+    } catch {
+      setMessage("The original file couldn’t be downloaded. Please try again.");
+    } finally {
+      if (href) setTimeout(() => URL.revokeObjectURL(href), 1000);
+      setDownloading(false);
+    }
+  }
+
   function accept(files: FileList | File[] | null) {
     if (!files?.length) return;
     const accepted: Entry[] = [];
@@ -327,7 +498,13 @@ export default function Playground() {
       store.goToPage(2);
       store.rotate(90);
       setMessage("Page 2 is now selected. Rotation changes the view, never the file.");
-    } else if (active.id === "image") {
+    } else if (active.id === "webp") {
+      store.setZoom("fit-width");
+    } else if (active.id === "gif") {
+      store.setZoom(1);
+    } else if (active.id === "svg") {
+      store.setZoom(4);
+    } else if (active.kind === "image" && !active.file) {
       store.setZoom(1.5);
     } else store.setZoom("fit-page");
   }
@@ -342,6 +519,9 @@ export default function Playground() {
     ["annotations", annotations.length > 0],
     ["geometry", caps?.viewport],
   ] as const;
+  const zoomPct = Math.round((metrics?.scale ?? (loaded ? store.getZoom() : 1)) * 100);
+  const canRotate =
+    !!caps?.rotation && (active.kind === "pdf" || /\.tiff?$/i.test(active.name));
   const projected =
     marker && metrics && active.id === "plan"
       ? projectRect(metrics, 0, { x: 617, y: 405, width: 127, height: 55 })
@@ -417,7 +597,8 @@ export default function Playground() {
         </div>
       </section>
       <main
-        className={`pg-shell ${dragging ? "pg-dragging" : ""}`}
+        ref={shell}
+        className={`pg-shell ${fullscreen ? "is-fullscreen" : ""} ${dragging ? "pg-dragging" : ""}`}
         onDragOver={(e) => {
           e.preventDefault();
           setDragging(true);
@@ -432,8 +613,18 @@ export default function Playground() {
         }}
       >
         <div className="pg-files">
+          <button
+            className="pg-tab-scroll"
+            aria-label="Scroll documents left"
+            title="More documents"
+            hidden={!tabOverflow.left}
+            onClick={() => tabsRef.current?.scrollBy({ left: -240, behavior: "smooth" })}
+          >
+            <ChevronLeft size={16} />
+          </button>
           <div
-            className="pg-tabs"
+            ref={tabsRef}
+            className={`pg-tabs ${tabOverflow.left ? "fade-left" : ""} ${tabOverflow.right ? "fade-right" : ""}`}
             role="tablist"
             aria-label="Documents"
             onKeyDown={(e) => {
@@ -467,15 +658,7 @@ export default function Playground() {
                 >
                   {entry.kind === "image" ? <ImageIcon size={16} /> : <FileText size={16} />}
                   <span>{entry.label}</span>
-                  {!entry.file && (
-                    <small>
-                      {entry.kind === "image"
-                        ? entry.id === "scan"
-                          ? "TIFF"
-                          : "PNG"
-                        : entry.kind.toUpperCase()}
-                    </small>
-                  )}
+                  {!entry.file && <small>{extOf(entry.name)}</small>}
                 </button>
                 {entry.file && (
                   <button
@@ -489,6 +672,15 @@ export default function Playground() {
               </div>
             ))}
           </div>
+          <button
+            className="pg-tab-scroll"
+            aria-label="Scroll documents right"
+            title="More documents"
+            hidden={!tabOverflow.right}
+            onClick={() => tabsRef.current?.scrollBy({ left: 240, behavior: "smooth" })}
+          >
+            <ChevronRight size={16} />
+          </button>
           <button className="pg-upload" onClick={() => input.current?.click()}>
             <Plus size={16} />
             <span>Open files</span>
@@ -507,59 +699,197 @@ export default function Playground() {
           />
         </div>
         <div className="pg-toolbar">
-          <div className="pg-tools">
-            <button
-              title="Page thumbnails"
-              aria-label="Page thumbnails"
-              disabled={!caps?.thumbnails || pages < 2}
-              aria-pressed={rail}
-              onClick={() => setRail((v) => !v)}
-            >
-              <PanelLeft size={17} />
-            </button>
-            <div className="pg-separator" />
-            <button
-              aria-label="Previous page"
-              disabled={!loaded || current <= 1}
-              onClick={() => store.goToPage(current - 1)}
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <span className="pg-page-count">{loaded ? `${current} / ${pages}` : "— / —"}</span>
-            <button
-              aria-label="Next page"
-              disabled={!loaded || current >= pages}
-              onClick={() => store.goToPage(current + 1)}
-            >
-              <ChevronRight size={16} />
-            </button>
-            <div className="pg-separator" />
-            <button
-              aria-label="Zoom out"
-              disabled={!loaded}
-              onClick={() => store.setZoom(Math.max(0.25, store.getZoom() - 0.25))}
-            >
-              <ZoomOut size={17} />
-            </button>
-            <button
-              aria-label="Fit document"
-              disabled={!loaded}
-              onClick={() => store.setZoom("fit-page")}
-            >
-              <Maximize size={16} />
-            </button>
-            <button
-              aria-label="Zoom in"
-              disabled={!loaded}
-              onClick={() => store.setZoom(Math.min(4, store.getZoom() + 0.25))}
-            >
-              <ZoomIn size={17} />
-            </button>
-            {caps?.rotation && (
-              <button aria-label="Rotate document" onClick={() => store.rotate(90)}>
-                <RotateCw size={16} />
+          <div className="pg-tools" role="toolbar" aria-label="Viewer tools">
+            <div className="pg-group" role="group" aria-label="Pages">
+              <button
+                title="Page thumbnails"
+                aria-label="Page thumbnails"
+                disabled={!caps?.thumbnails || pages < 2}
+                aria-pressed={rail}
+                onClick={() => setRail((v) => !v)}
+              >
+                <PanelLeft size={17} />
               </button>
+              <button
+                title="Previous page"
+                aria-label="Previous page"
+                disabled={!loaded || current <= 1}
+                onClick={() => store.goToPage(current - 1)}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <form className="pg-page-jump" onSubmit={jumpToPage}>
+                <input
+                  aria-label={`Page number, 1 to ${pages || 1}`}
+                  title="Go to page"
+                  inputMode="numeric"
+                  disabled={!loaded || pages < 1}
+                  aria-invalid={pageInvalid}
+                  value={loaded ? pageDraft : "—"}
+                  onChange={(e) => {
+                    setPageDraft(e.target.value.replace(/[^0-9]/g, ""));
+                    setPageInvalid(false);
+                  }}
+                  onBlur={() => {
+                    if (!pageInvalid) setPageDraft(String(current));
+                  }}
+                />
+                <span aria-hidden>/ {loaded ? pages : "—"}</span>
+              </form>
+              <button
+                title="Next page"
+                aria-label="Next page"
+                disabled={!loaded || current >= pages}
+                onClick={() => store.goToPage(current + 1)}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+            <div className="pg-group" role="group" aria-label="Zoom">
+              <button
+                title="Zoom out"
+                aria-label="Zoom out"
+                disabled={!loaded}
+                onClick={() => store.setZoom(Math.max(0.25, store.getZoom() - 0.25))}
+              >
+                <ZoomOut size={17} />
+              </button>
+              <select
+                className="pg-zoom-select"
+                aria-label="Zoom level"
+                title="Zoom level"
+                disabled={!loaded}
+                value={ZOOM_PRESETS.includes(zoomPct) ? String(zoomPct) : "current"}
+                onChange={(e) => store.setZoom(Number(e.target.value) / 100)}
+              >
+                {!ZOOM_PRESETS.includes(zoomPct) && (
+                  <option value="current" disabled>
+                    {loaded ? `${zoomPct}%` : "—"}
+                  </option>
+                )}
+                {ZOOM_PRESETS.map((z) => (
+                  <option key={z} value={z}>
+                    {z}%
+                  </option>
+                ))}
+              </select>
+              <button
+                title="Zoom in"
+                aria-label="Zoom in"
+                disabled={!loaded}
+                onClick={() => store.setZoom(Math.min(4, store.getZoom() + 0.25))}
+              >
+                <ZoomIn size={17} />
+              </button>
+              <button
+                title="Fit page"
+                aria-label="Fit page"
+                disabled={!loaded}
+                aria-pressed={state.zoom === "fit-page"}
+                onClick={() => store.setZoom("fit-page")}
+              >
+                <Maximize size={16} />
+              </button>
+              <button
+                title="Fit width"
+                aria-label="Fit width"
+                disabled={!loaded}
+                aria-pressed={state.zoom === "fit-width"}
+                onClick={() => store.setZoom("fit-width")}
+              >
+                <MoveHorizontal size={17} />
+              </button>
+              <button
+                title="Actual size (100%)"
+                aria-label="Actual size"
+                className="pg-text-tool"
+                disabled={!loaded}
+                onClick={() => store.setZoom(1)}
+              >
+                1:1
+              </button>
+            </div>
+            {canRotate && (
+              <div className="pg-group" role="group" aria-label="Rotate">
+                <button
+                  title="Rotate left"
+                  aria-label="Rotate left"
+                  onClick={() => store.rotate(-90)}
+                >
+                  <RotateCcw size={16} />
+                </button>
+                <button
+                  title="Rotate right"
+                  aria-label="Rotate right"
+                  onClick={() => store.rotate(90)}
+                >
+                  <RotateCw size={16} />
+                </button>
+              </div>
             )}
+            {loaded && (layers.length > 0 || annotations.length > 0 || active.id === "plan") && (
+              <div className="pg-group" role="group" aria-label="Inspect">
+                {layers.length > 0 && (
+                  <button
+                    title="Layers"
+                    aria-label="Show layer controls"
+                    onClick={() => reveal("pg-layers", "features")}
+                  >
+                    <Layers size={16} />
+                  </button>
+                )}
+                {annotations.length > 0 && (
+                  <button
+                    title="Notes"
+                    aria-label="Show review notes"
+                    onClick={() => reveal("pg-notes", "features")}
+                  >
+                    <MessageSquare size={16} />
+                  </button>
+                )}
+                {active.id === "plan" && (
+                  <button
+                    title={marker ? "Hide anchored marker" : "Anchor a marker"}
+                    aria-label="Anchored marker"
+                    aria-pressed={marker}
+                    onClick={() => {
+                      setMarker((v) => !v);
+                      store.goToPage(1);
+                    }}
+                  >
+                    <MousePointer2 size={16} />
+                  </button>
+                )}
+              </div>
+            )}
+            <div className="pg-group" role="group" aria-label="Workspace">
+              <button
+                title="View integration code"
+                aria-label="View integration code"
+                aria-pressed={panel === "code" && (sidebar || skin === "studio")}
+                onClick={() => reveal("pg-code", "code")}
+              >
+                <Code2 size={16} />
+              </button>
+              <button
+                title={fullscreen ? "Exit fullscreen" : "Fullscreen workspace"}
+                aria-label={fullscreen ? "Exit fullscreen" : "Fullscreen workspace"}
+                aria-pressed={fullscreen}
+                onClick={() => void toggleFullscreen()}
+              >
+                {fullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
+              <button
+                title="Download original file"
+                aria-label={`Download original ${active.name}`}
+                className="pg-download"
+                disabled={busy || downloading || !!error}
+                onClick={() => void downloadOriginal()}
+              >
+                {downloading ? <Loader2 size={15} className="pg-spin" /> : <Download size={16} />}
+                <span>Download original</span>
+              </button>
+            </div>
           </div>
           <form
             className="pg-search"
@@ -720,7 +1050,7 @@ export default function Playground() {
                 </div>
                 {layers.length > 0 && (
                   <section>
-                    <h3>
+                    <h3 id="pg-layers" tabIndex={-1}>
                       <Layers size={15} />
                       Peel back the layers
                     </h3>
@@ -739,7 +1069,7 @@ export default function Playground() {
                 )}
                 {annotations.length > 0 && (
                   <section>
-                    <h3>
+                    <h3 id="pg-notes" tabIndex={-1}>
                       <MessageSquare size={15} />
                       Read the review notes
                     </h3>
@@ -811,8 +1141,9 @@ export default function Playground() {
                   <section>
                     <h3>Even the unusual files.</h3>
                     <p>
-                      PNG, JPEG, GIF, WebP, SVG, TIFF and HEIC. Multi-page TIFF adds page browsing
-                      and rotation. Image files have no OCR or text search.
+                      PNG, JPEG, GIF, WebP, SVG, TIFF and HEIC/HEIF uploads. Multi-page TIFF adds
+                      page browsing and rotation. GIFs show a still frame. Image files have no OCR
+                      or text search.
                     </p>
                   </section>
                 )}
@@ -827,7 +1158,7 @@ export default function Playground() {
             ) : (
               <div className="pg-panel-content pg-code-panel">
                 <div className="pg-code-heading">
-                  <strong>
+                  <strong id="pg-code" tabIndex={-1}>
                     One engine.
                     <br />
                     Your interface.
