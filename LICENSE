@@ -1,17 +1,22 @@
+Loupe Evaluation Licence
 Copyright (c) 2026 Veridox. All rights reserved.
 
-This software and its source code are the confidential and proprietary
-information of Veridox ("Proprietary Information"). It is NOT open-source
-software and is not licensed for public use, redistribution, or modification.
+Veridox permits you to download, install, run and internally modify the Loupe
+software (source or compiled) distributed with this licence, without charge, solely to evaluate,
+test and prototype integrations in a non-production environment. This
+permission includes internal evaluation by commercial organisations.
 
-No license, right, or interest in or to this software is granted except as
-expressly set out in a written agreement signed by Veridox. Unauthorized
-copying, use, disclosure, distribution, modification, public display, or
-public performance of this software, in whole or in part, via any medium, is
-strictly prohibited.
+Commercial or production use requires separate written permission from
+Veridox. You may not redistribute, sublicense, sell, or make the Loupe package
+or modified versions available to third parties under this evaluation licence.
+Preserve this licence and all copyright notices in permitted copies.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+No ownership is transferred. Rights not expressly granted are reserved.
+Third-party components remain subject to their own licences; this licence
+does not limit rights granted by those licences.
 
---------------------------------------------------------------------------------
-PLACEHOLDER: replace this notice with the definitive license text approved by
-Veridox legal before distribution.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NON-INFRINGEMENT. TO THE EXTENT PERMITTED BY APPLICABLE LAW,
+VERIDOX IS NOT LIABLE FOR CLAIMS, DAMAGES OR OTHER LIABILITY ARISING FROM
+THE SOFTWARE OR ITS USE.

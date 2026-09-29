@@ -5,7 +5,7 @@
 Use Node.js 24 LTS for development. In your application:
 
 ```sh
-npm install https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
 ```
 
 One prebuilt package includes the core, PDF, DOCX and image adapters, plus optional React bindings. No GitHub login, clone or library build is required. Plain TypeScript apps do not need React; the example below uses React and React DOM >=18 from your app.
@@ -16,10 +16,10 @@ Free for non-production evaluation and prototyping. Commercial or production use
 
 ```tsx
 import type { ChangeEvent } from 'react';
-import { ViewerStore } from '@veridox-ai/loupe';
-import { ViewerProvider, ViewerSurface } from '@veridox-ai/loupe/react';
-import { useViewer, usePageNavigation, useZoom } from '@veridox-ai/loupe/react';
-import { createPdfAdapterFactory } from '@veridox-ai/loupe/pdf';
+import { ViewerStore } from '@andreilocota/loupe';
+import { ViewerProvider, ViewerSurface } from '@andreilocota/loupe/react';
+import { useViewer, usePageNavigation, useZoom } from '@andreilocota/loupe/react';
+import { createPdfAdapterFactory } from '@andreilocota/loupe/pdf';
 
 const store = new ViewerStore();
 store.registerFactory(createPdfAdapterFactory());
@@ -102,9 +102,9 @@ function App() {
 ## Registering Adapters
 
 ```ts
-import { createPdfAdapterFactory } from '@veridox-ai/loupe/pdf';
-import { createImageAdapterFactory } from '@veridox-ai/loupe/image';
-import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
+import { createPdfAdapterFactory } from '@andreilocota/loupe/pdf';
+import { createImageAdapterFactory } from '@andreilocota/loupe/image';
+import { createDocxAdapterFactory } from '@andreilocota/loupe/docx';
 
 const store = new ViewerStore();
 store.registerFactory(createPdfAdapterFactory());
@@ -129,9 +129,9 @@ yourself:
 
 | Package | Asset (default path) | Override |
 |---|---|---|
-| `@veridox-ai/loupe/pdf` | `dist/pdf/workers/pdf.worker.js` | `createPdfAdapterFactory(workerSrc)` |
-| `@veridox-ai/loupe/image` | `dist/image/workers/tiff.worker.js` | `createImageAdapterFactory({ tiffWorkerUrl })` |
-| `@veridox-ai/loupe/docx` | `@silurus/ooxml/dist/docx_parser_bg.wasm` (+ worker) | `createDocxAdapterFactory({ wasmUrl })` |
+| `@andreilocota/loupe/pdf` | `dist/pdf/workers/pdf.worker.js` | `createPdfAdapterFactory(workerSrc)` |
+| `@andreilocota/loupe/image` | `dist/image/workers/tiff.worker.js` | `createImageAdapterFactory({ tiffWorkerUrl })` |
+| `@andreilocota/loupe/docx` | `@silurus/ooxml/dist/docx_parser_bg.wasm` (+ worker) | `createDocxAdapterFactory({ wasmUrl })` |
 
 ```ts
 store.registerFactory(createPdfAdapterFactory('/assets/pdf.worker.js'));

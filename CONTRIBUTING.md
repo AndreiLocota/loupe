@@ -68,7 +68,7 @@ changeset describing user-facing changes:
 npm run changeset
 ```
 
-Maintainers run `npm run version` when changing package versions. Build and run `npm run pack:packages` to produce distributable archives. This repository does not automatically publish to the upstream private registry. Public distribution requires agreed reuse terms.
+Maintainers run `npm run version` when changing package versions. Build and run `npm run pack:packages` to produce distributable archives. This repository does not automatically publish to the upstream private registry. The public source and compiled viewer use the evaluation terms in LICENSE; commercial or production use requires written permission. Use `npm run pack:viewer` for the all-in-one public archive.
 
 ## Reporting security issues
 

@@ -2,7 +2,7 @@
 
 A headless document viewer library for **PDF, DOCX, and images**. Rendering happens in the browser; no Loupe server, API key, or account is needed at runtime. Your app provides the toolbar and surrounding interface. TypeScript core, optional React bindings.
 
-[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz)
+[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz)
 
 ## From the demo to your app
 
@@ -11,14 +11,14 @@ The browser demo is a Word inspector built with Loupe. Loupe supplies document r
 Install the complete viewer package in your application:
 
 ```sh
-npm install https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
 ```
 
 This prebuilt package includes the core, PDF, Word and image adapters, and optional React bindings. No GitHub account, repository clone or Loupe build is needed. Start with the [integration guide](docs/getting-started.md) or the [public package guide](https://tryloupe.lovable.app/downloads/README.md).
 
 ```ts
-import { ViewerStore } from '@veridox-ai/loupe';
-import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
+import { ViewerStore } from '@andreilocota/loupe';
+import { createDocxAdapterFactory } from '@andreilocota/loupe/docx';
 
 const viewer = new ViewerStore();
 viewer.registerFactory(createDocxAdapterFactory());
@@ -31,11 +31,11 @@ Give the viewer element a height. The guide includes the file input, error handl
 
 ## Evaluation terms
 
-The public all-in-one download is free for non-production evaluation and prototyping, including internal evaluation by companies. Commercial or production use requires separate written permission from Veridox. Redistribution is not granted. See [distribution/LICENSE](distribution/LICENSE). Source repository access remains private under its existing [LICENSE](LICENSE).
+The public all-in-one download is free for non-production evaluation and prototyping, including internal evaluation by companies. Commercial or production use requires separate written permission from Veridox. Redistribution is not granted. See [distribution/LICENSE](distribution/LICENSE). The source repository is public under the same evaluation terms; see [LICENSE](LICENSE).
 
 ## Internal packages
 
-The public `@veridox-ai/loupe` archive combines these implementation packages; consumers do not need to install them individually.
+The public `@andreilocota/loupe` archive combines these implementation packages; consumers do not need to install them individually.
 
 | Package | Version | Purpose |
 |---|---|---|
@@ -72,4 +72,4 @@ For the saved website, enter `site/`, then run `bun install --frozen-lockfile` a
 
 ## Distribution
 
-Maintainers with repository access can run `npm run build` and `npm run pack:viewer` to create the public evaluation archive and its integrity manifest. Its content is compiled from all five packages, with one shared core and optional React peers. Source licences remain unchanged; the public compiled distribution carries its separate evaluation licence. The original `pack:packages` workflow remains available for internal consumers. No package has been published to the public npm registry.
+Maintainers with repository access can run `npm run build` and `npm run pack:viewer` to create the public evaluation archive and its integrity manifest. Its content is compiled from all five packages, with one shared core and optional React peers. Source and compiled distribution carry the same evaluation terms. The original `pack:packages` workflow remains available for internal consumers. No package has been published to the public npm registry.

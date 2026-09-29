@@ -7,7 +7,7 @@ PDF, Word and image viewing in your app, with your own interface. One prebuilt p
 Run this in your application:
 
 ```sh
-npm install https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
 ```
 
 No GitHub account, repository clone or Loupe build is needed. This package is free for non-production evaluation and prototyping, including internal evaluation by companies. Commercial or production use requires separate written permission from Veridox. See LICENSE for the complete terms.
@@ -22,8 +22,8 @@ In a browser app using Vite:
 ```
 
 ```ts
-import { ViewerStore } from '@veridox-ai/loupe';
-import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
+import { ViewerStore } from '@andreilocota/loupe';
+import { createDocxAdapterFactory } from '@andreilocota/loupe/docx';
 
 const viewer = new ViewerStore();
 viewer.registerFactory(createDocxAdapterFactory());
@@ -44,7 +44,7 @@ document.querySelector<HTMLInputElement>('#file')!.onchange = async (event) => {
 // viewer.setMountElement(null);
 ```
 
-For PDF use `createPdfAdapterFactory` from `@veridox-ai/loupe/pdf`. For images use `createImageAdapterFactory` from `@veridox-ai/loupe/image`. Register the adapters your app needs. React bindings are available from `@veridox-ai/loupe/react`; install React and React DOM in the consuming app if using them. No API key or hosted backend is required at runtime.
+For PDF use `createPdfAdapterFactory` from `@andreilocota/loupe/pdf`. For images use `createImageAdapterFactory` from `@andreilocota/loupe/image`. Register the adapters your app needs. React bindings are available from `@andreilocota/loupe/react`; install React and React DOM in the consuming app if using them. No API key or hosted backend is required at runtime.
 
 ## Runtime assets
 
