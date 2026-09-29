@@ -1,35 +1,40 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowUpRight, Check, ChevronDown, Lock, Minus } from "lucide-react";
+import { ArrowUpRight, Check, ChevronDown, Download, Minus } from "lucide-react";
 
 import { CodePanel } from "@/components/loupe/code-panel";
 import {
   API_CARDS,
-  API_SNIPPET,
+  ASSETS_COMMAND,
+  ASSETS_SNIPPET,
+  CLEANUP_SNIPPET,
+  ENTRY_POINTS,
+  FORMAT_ENTRY,
+  HTML_SNIPPET,
   MATRIX_COLUMNS,
   MATRIX_ROWS,
-  PACKAGES,
   RUNTIME_ASSETS,
+  VITE_SNIPPET,
 } from "@/components/loupe/site-data";
 import {
   ACCESS_NOTE,
-  DOCS_URL,
-  EXAMPLE_URL,
-  EXAMPLES_URL,
-  INSTALL_COMMAND,
+  EVALUATION_LICENSE_PATH,
   LICENSE_SUMMARY,
   LICENSE_URL,
   LINK_ACCESS_SUFFIX,
   NODE_VERSION,
-  PACK_COMMAND,
-  QUICKSTART,
-  RELEASE_URL,
+  PACKAGE_INSTALL_COMMAND,
+  PACKAGE_README_PATH,
+  PACKAGE_SHA256,
+  PACKAGE_URL,
+  PACKAGE_VERSION,
   REPO_URL,
+  CHECKSUMS_PATH,
 } from "@/lib/release";
 
 const TITLE = "Loupe for developers — add document viewing to your app";
 const DESCRIPTION =
-  "Headless TypeScript document viewer for PDF, DOCX and images with optional React bindings. Quick start, integration steps and format support.";
+  "Install one package for PDF, Word and image viewing in your app, with optional React bindings. Free for evaluation and prototyping.";
 
 export const Route = createFileRoute("/developers")({
   head: () => ({
@@ -46,10 +51,10 @@ export const Route = createFileRoute("/developers")({
 });
 
 const NAV = [
-  { id: "quick-start", label: "Quick start" },
-  { id: "integrate", label: "Integrate" },
+  { id: "install", label: "Install" },
+  { id: "integrate", label: "Open a Word file" },
   { id: "what-you-tried", label: "What you tried" },
-  { id: "api", label: "API excerpt" },
+  { id: "api", label: "API" },
   { id: "formats", label: "Format support" },
   { id: "runtime-assets", label: "Runtime assets" },
   { id: "license", label: "Licence" },
@@ -102,13 +107,14 @@ function Cell({ value }: { value: string }) {
   return <span className="font-mono text-xs text-navy-soft">{value}</span>;
 }
 
-function AccessNotice() {
-  if (!ACCESS_NOTE) return null;
+function Local({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <p className="mb-5 flex items-start gap-2 rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
-      <Lock className="mt-0.5 size-4 shrink-0 text-cobalt" aria-hidden />
-      <span>{ACCESS_NOTE}</span>
-    </p>
+    <a
+      href={href}
+      className="focus-ring inline-flex items-center gap-1 font-medium text-cobalt underline-offset-4 hover:underline"
+    >
+      {children}
+    </a>
   );
 }
 
@@ -153,9 +159,8 @@ function DevelopersPage() {
             Add document viewing to your app.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            A headless TypeScript core that renders PDF, DOCX and images in the browser, with
-            optional React bindings. You build the interface. No hosted API account, key or backend
-            is required at runtime.
+            One package renders PDF, Word and images in the browser, with optional React bindings.
+            You build the interface. No API key, account or hosted backend is required at runtime.
           </p>
           <nav aria-label="On this page" className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm">
             {NAV.map((n) => (
@@ -172,45 +177,67 @@ function DevelopersPage() {
       </section>
 
       <main className="mx-auto max-w-5xl space-y-16 px-5 py-14 sm:px-8">
-        <section id="quick-start" aria-labelledby="quick-start-title">
-          <H2 id="quick-start" eyebrow="Step 1" title="Quick start" />
-          <AccessNotice />
+        <section id="install" aria-labelledby="install-title">
+          <H2 id="install" eyebrow="Step 1" title="Install" />
           <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-            Use {NODE_VERSION}. Clone, build and run the local reference viewer:
+            Run this in your application folder:
           </p>
-          <CodePanel code={QUICKSTART} label="Terminal" />
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Then open <code className="font-mono text-foreground">{EXAMPLES_URL}</code> and choose a
-            Word, PDF or image file.
-          </p>
+          <CodePanel code={PACKAGE_INSTALL_COMMAND} label="Terminal" />
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <a
+              href={PACKAGE_URL}
+              download
+              className="focus-ring inline-flex items-center gap-2 rounded-md bg-cobalt px-3.5 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <Download className="size-4" aria-hidden />
+              Download package
+            </a>
+            <Local href={EVALUATION_LICENSE_PATH}>Evaluation licence</Local>
+            <Local href={PACKAGE_README_PATH}>Package README</Local>
+          </div>
+          <ul className="mt-5 space-y-1.5 text-sm leading-relaxed text-muted-foreground">
+            <li>
+              One package (<code className="font-mono text-foreground">@veridox-ai/loupe</code>{" "}
+              {PACKAGE_VERSION}) includes PDF, Word, images and optional React bindings.
+            </li>
+            <li>No GitHub account, repository clone or Loupe build is needed.</li>
+            <li>Your app still needs a bundler, such as Vite. We develop with {NODE_VERSION}.</li>
+            <li>
+              Downloaded from this site, not the public npm registry.{" "}
+              <Local href={CHECKSUMS_PATH}>SHA-256</Local>:{" "}
+              <code className="font-mono text-[0.6875rem] break-all">{PACKAGE_SHA256}</code>
+            </li>
+          </ul>
         </section>
 
         <section id="integrate" aria-labelledby="integrate-title">
-          <H2 id="integrate" eyebrow="Step 2" title="Integrate into your app" />
+          <H2 id="integrate" eyebrow="Step 2" title="Open a Word file" />
           <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-            From the clone (after the build above), pack the packages:
+            In a browser app using Vite, add a file input and a viewer element with a definite
+            height:
           </p>
-          <CodePanel code={PACK_COMMAND} label="In the loupe checkout" />
+          <CodePanel code={HTML_SNIPPET} label="index.html" />
           <p className="my-4 text-sm leading-relaxed text-muted-foreground">
-            From your application folder, install Core, DOCX and React together. Adjust{" "}
-            <code className="font-mono text-foreground">../loupe</code> to your checkout path.
+            Create a viewer, register the Word adapter, mount it and load the chosen file:
           </p>
-          <CodePanel code={INSTALL_COMMAND} label="In your application" />
+          <CodePanel code={VITE_SNIPPET} label="main.ts" />
+          <p className="my-4 text-sm leading-relaxed text-muted-foreground">Clean up when done:</p>
+          <CodePanel code={CLEANUP_SNIPPET} label="Cleanup" />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Loupe is a five-package workspace, so it is not installed from a public npm scope or
-            with <code className="font-mono">npm install AndreiLocota/loupe</code>.
+            For PDF use <code className="font-mono text-foreground">createPdfAdapterFactory</code>{" "}
+            from <code className="font-mono text-foreground">@veridox-ai/loupe/pdf</code>; for
+            images use <code className="font-mono text-foreground">createImageAdapterFactory</code>{" "}
+            from <code className="font-mono text-foreground">@veridox-ai/loupe/image</code>. Vite
+            emits the PDF, TIFF and Word workers and the WASM file automatically. In SSR apps,
+            import adapters only in browser code.{" "}
+            <Link
+              to="/playground"
+              className="focus-ring font-medium text-cobalt underline-offset-4 hover:underline"
+            >
+              The playground
+            </Link>{" "}
+            shows eight sample formats.
           </p>
-          <ul className="mt-5 space-y-2 text-sm">
-            <li>
-              Prebuilt archives: <Ext href={RELEASE_URL}>Release library-preview-2026-09-28</Ext>
-            </li>
-            <li>
-              Full integration and runtime asset guide: <Ext href={DOCS_URL}>Getting started</Ext>
-            </li>
-            <li>
-              Working example source: <Ext href={EXAMPLE_URL}>examples/viewer-app.tsx</Ext>
-            </li>
-          </ul>
         </section>
 
         <section id="what-you-tried" aria-labelledby="what-you-tried-title">
@@ -244,12 +271,20 @@ function DevelopersPage() {
         </section>
 
         <section id="api" aria-labelledby="api-title">
-          <H2 id="api" eyebrow="API" title="Adapter setup excerpt" />
-          <CodePanel code={API_SNIPPET} label="Excerpt — adapter setup, not a complete app" />
+          <H2 id="api" eyebrow="API" title="Entry points" />
+          <div className="rounded-xl border border-border bg-card p-5">
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {ENTRY_POINTS.map((p) => (
+                <li key={p.path} className="text-sm">
+                  <code className="font-mono text-[0.8125rem] text-cobalt">{p.path}</code>
+                  <span className="block text-xs text-muted-foreground">{p.note}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            This only registers the DOCX adapter on a viewer store. For a complete runnable viewer
-            see <Ext href={EXAMPLE_URL}>examples/viewer-app.tsx</Ext>. APIs are pre-1.0 and can
-            change.
+            React is optional: <code className="font-mono text-foreground">/react</code> uses your
+            app&apos;s own React and React DOM 18 or newer. APIs are pre-1.0 and can change.
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {API_CARDS.map((c) => (
@@ -270,17 +305,6 @@ function DevelopersPage() {
                 ) : null}
               </div>
             ))}
-          </div>
-          <div className="mt-6 rounded-xl border border-border bg-card p-5">
-            <h3 className="text-sm font-semibold">Packages</h3>
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-              {PACKAGES.map((p) => (
-                <li key={p.name} className="text-sm">
-                  <code className="font-mono text-[0.8125rem] text-cobalt">{p.name}</code>
-                  <span className="block text-xs text-muted-foreground">{p.note}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
 
@@ -311,7 +335,7 @@ function DevelopersPage() {
                     <th scope="row" className="p-3 text-left align-top">
                       <span className="font-semibold">{row.format}</span>
                       <span className="block font-mono text-[0.6875rem] font-normal text-muted-foreground">
-                        {row.detail}
+                        {FORMAT_ENTRY[row.format] ?? `@veridox-ai/loupe/image · ${row.detail}`}
                       </span>
                     </th>
                     {row.values.map((v, i) => (
@@ -347,15 +371,29 @@ function DevelopersPage() {
                 </li>
               ))}
             </ul>
+            <div className="border-t border-border p-5">
+              <h3 className="text-sm font-semibold">If your bundler needs explicit URLs</h3>
+              <p className="mt-1 mb-3 text-sm leading-relaxed text-muted-foreground">
+                Copy the assets into your public folder (repeat when upgrading), then pass the URLs:
+              </p>
+              <CodePanel code={ASSETS_COMMAND} label="Terminal" />
+              <div className="mt-3">
+                <CodePanel code={ASSETS_SNIPPET} label="Explicit asset URLs" />
+              </div>
+            </div>
           </details>
         </section>
 
         <section id="license" aria-labelledby="license-title">
           <H2 id="license" eyebrow="Terms" title="Licence" />
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {LICENSE_SUMMARY ? `${LICENSE_SUMMARY} ` : ""}
-            The repository&apos;s <Ext href={LICENSE_URL}>LICENSE</Ext> is the definitive terms.
-            Source: <Ext href={REPO_URL}>AndreiLocota/loupe</Ext>
+            {LICENSE_SUMMARY} Loupe is not open source. The{" "}
+            <Local href={EVALUATION_LICENSE_PATH}>evaluation licence</Local> included in the
+            downloaded package is the complete terms for that package.
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            {ACCESS_NOTE} Source (proprietary <Ext href={LICENSE_URL}>LICENSE</Ext>):{" "}
+            <Ext href={REPO_URL}>AndreiLocota/loupe</Ext>
           </p>
         </section>
       </main>

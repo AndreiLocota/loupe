@@ -28,7 +28,8 @@
     "pretest:security": "npm run generate-corpus",
     "dev:packages": "tsup --config tsup.config.ts --watch",
     "pack:packages": "node scripts/pack-packages.mjs",
-    "verify:packages": "node scripts/verify-packages.mjs"
+    "verify:packages": "node scripts/verify-packages.mjs",
+    "pack:viewer": "node scripts/pack-viewer.mjs"
   },
   "workspaces": [
     "packages/*"

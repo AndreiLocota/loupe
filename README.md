@@ -2,50 +2,40 @@
 
 A headless document viewer library for **PDF, DOCX, and images**. Rendering happens in the browser; no Loupe server, API key, or account is needed at runtime. Your app provides the toolbar and surrounding interface. TypeScript core, optional React bindings.
 
-[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/tag/library-preview-2026-09-28)
+[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz)
 
 ## From the demo to your app
 
 The browser demo is a Word inspector built with Loupe. Loupe supplies document rendering, page navigation, zoom, text selection and search. The inspector adds its own retained-change findings, comments panel and timeline; those application features are not part of the library API.
 
-To try the library itself, run the reference viewer below. It opens PDF, DOCX and images. To embed it in your product, install Core plus the format adapters you need, then use the [integration guide](docs/getting-started.md) and [working React example](examples/viewer-app.tsx). The API is JavaScript/TypeScript running in your browser, not a hosted HTTP service.
-
-## Try the library
-
-Use Node.js 24 LTS and npm. With access to this repository:
+Install the complete viewer package in your application:
 
 ```sh
-git clone https://github.com/AndreiLocota/loupe.git
-cd loupe
-npm ci
-npm run build
-npm run dev
+npm install https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz
 ```
 
-Open **http://127.0.0.1:5173/examples/** and choose a PDF, DOCX, or image. Synthetic sample documents are in `corpus/production/`. The example includes page navigation, zoom, search, thumbnails and format-specific controls. Its JavaScript, workers and DOCX WASM are served locally; it does not require a CDN or private package-registry token.
+This prebuilt package includes the core, PDF, Word and image adapters, and optional React bindings. No GitHub account, repository clone or Loupe build is needed. Start with the [integration guide](docs/getting-started.md) or the [public package guide](https://tryloupe.lovable.app/downloads/README.md).
 
-## Use Loupe in your own app
+```ts
+import { ViewerStore } from '@veridox-ai/loupe';
+import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
 
-Build and create installable archives from this checkout:
-
-```sh
-npm run build
-npm run pack:packages
+const viewer = new ViewerStore();
+viewer.registerFactory(createDocxAdapterFactory());
+viewer.setMountElement(document.querySelector('#viewer'));
+// In your file input handler, where `file` is a File:
+await viewer.loadDocument({ data: file, fileName: file.name }, { initialZoom: 'fit-page' });
 ```
 
-The prebuilt archives are also attached to the [library preview release](https://github.com/AndreiLocota/loupe/releases/tag/library-preview-2026-09-28) for people with repository access.
+Give the viewer element a height. The guide includes the file input, error handling and cleanup. Vite automatically emits the required workers and WASM; an optional `npx loupe-assets public/loupe` command supports bundlers needing explicit asset URLs.
 
-Then, from your application's folder, install **Core plus the adapters you use**, and React bindings if needed. Replace `../loupe` with the path to this checkout:
+## Evaluation terms
 
-```sh
-npm install ../loupe/artifacts/veridox-ai-loupe-core-0.3.1.tgz ../loupe/artifacts/veridox-ai-loupe-docx-3.0.2.tgz ../loupe/artifacts/veridox-ai-loupe-react-2.0.0.tgz
-```
+The public all-in-one download is free for non-production evaluation and prototyping, including internal evaluation by companies. Commercial or production use requires separate written permission from Veridox. Redistribution is not granted. See [distribution/LICENSE](distribution/LICENSE). Source repository access remains private under its existing [LICENSE](LICENSE).
 
-These archives install without Veridox's private registry. Install Core in the same command so npm can satisfy the other packages' Core peer dependency. Do not use `npm install AndreiLocota/loupe` — the repository is a workspace containing five packages, not a single package.
+## Internal packages
 
-See [Getting Started](docs/getting-started.md) for a React integration and worker/WASM asset setup. `npm run pack:packages` writes all five archives plus their integrity hashes to `artifacts/`.
-
-## Packages
+The public `@veridox-ai/loupe` archive combines these implementation packages; consumers do not need to install them individually.
 
 | Package | Version | Purpose |
 |---|---|---|
@@ -80,6 +70,6 @@ For browser checks, run `npx playwright install chromium firefox`, then `npm run
 
 For the saved website, enter `site/`, then run `bun install --frozen-lockfile` and `bun run dev`. The upload experience lives at `/`, the multi-format playground at `/playground`, the integration guide at `/developers`, and the previous landing page is preserved at `/original`. `/try` remains a compatibility route. It is not automatically synchronized with Lovable.
 
-## License and distribution status
+## Distribution
 
-The repository and package archives currently retain the upstream **proprietary Veridox license**. This is a private integration preview, not an open-source release. No packages have been published to public npm. Public reuse terms must be selected before the public launch; see [LICENSE](LICENSE). The upstream automated private-registry publishing workflow is intentionally absent here.
+Maintainers with repository access can run `npm run build` and `npm run pack:viewer` to create the public evaluation archive and its integrity manifest. Its content is compiled from all five packages, with one shared core and optional React peers. Source licences remain unchanged; the public compiled distribution carries its separate evaluation licence. The original `pack:packages` workflow remains available for internal consumers. No package has been published to the public npm registry.

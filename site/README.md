@@ -29,6 +29,8 @@ bun run build    # prebuild does the same
 
 Live site: https://tryloupe.lovable.app/ — developer guide at `/developers`, multi-format demo at `/playground`.
 
-Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `cba2c8a256547e5cac77c037c521d1b9bd4fd5c1`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
+Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `2de1e46ae8e476457dcdb6ef8794b6c3bc214af4`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
 
 The background asset is included under `public/__l5e/assets-v1/` so this export can run independently of Lovable asset hosting.
+
+Public evaluation downloads live under `/downloads/`. The developer guide uses one prebuilt package; GitHub source access remains private.

@@ -43,3 +43,6 @@ artifacts/
 # `npm run test:security` regenerate them locally. All-synthetic, generated
 # production/ samples remain committed.
 corpus/malicious/
+
+# Deliberate versioned public evaluation download, mirrored from Lovable.
+!site/public/downloads/veridox-ai-loupe-0.1.0.tgz

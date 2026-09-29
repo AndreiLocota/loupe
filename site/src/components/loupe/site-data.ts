@@ -169,3 +169,47 @@ export const RUNTIME_ASSETS = [
   },
 ];
 
+/* ---- Single-package (@veridox-ai/loupe) content for /developers. /original keeps the entries above. ---- */
+
+export const ENTRY_POINTS = [
+  { path: "@veridox-ai/loupe", note: "Headless core: ViewerStore, types, errors, events" },
+  { path: "@veridox-ai/loupe/docx", note: "Word adapter: createDocxAdapterFactory" },
+  { path: "@veridox-ai/loupe/pdf", note: "PDF adapter: createPdfAdapterFactory" },
+  { path: "@veridox-ai/loupe/image", note: "Image adapter: createImageAdapterFactory" },
+  { path: "@veridox-ai/loupe/react", note: "Optional React bindings; needs your react + react-dom >= 18" },
+];
+
+export const FORMAT_ENTRY: Record<string, string> = {
+  PDF: "@veridox-ai/loupe/pdf",
+  DOCX: "@veridox-ai/loupe/docx",
+};
+
+export const HTML_SNIPPET = `<input id="file" type="file" accept=".docx,.docm" />
+<div id="viewer" style="height: 75vh"></div>`;
+
+export const VITE_SNIPPET = `import { ViewerStore } from '@veridox-ai/loupe';
+import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
+
+const viewer = new ViewerStore();
+viewer.registerFactory(createDocxAdapterFactory());
+viewer.setMountElement(document.querySelector<HTMLElement>('#viewer')!);
+
+document.querySelector<HTMLInputElement>('#file')!.onchange = async (event) => {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  try {
+    await viewer.loadDocument({ data: file, fileName: file.name }, { initialZoom: 'fit-page' });
+  } catch (error) {
+    console.error('Could not open document', error);
+  }
+};`;
+
+export const CLEANUP_SNIPPET = `// When your component unmounts:
+viewer.closeDocument();
+viewer.setMountElement(null);`;
+
+export const ASSETS_COMMAND = "npx loupe-assets public/loupe";
+
+export const ASSETS_SNIPPET = `createPdfAdapterFactory('/loupe/pdf.worker.js');
+createImageAdapterFactory({ tiffWorkerUrl: '/loupe/tiff.worker.js' });
+createDocxAdapterFactory({ wasmUrl: '/loupe/docx_parser_bg.wasm' });`;

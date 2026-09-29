@@ -2,26 +2,24 @@
 
 ## Installation
 
-Use Node.js 24 LTS. Clone this repository, run `npm ci`, then `npm run build` and `npm run pack:packages`. No private npm registry token is required for that workflow.
-
-From your React application's folder, install Core, React and the PDF adapter from those archives (adjust the checkout path):
+Use Node.js 24 LTS for development. In your application:
 
 ```sh
-npm install ../loupe/artifacts/veridox-ai-loupe-core-0.3.1.tgz ../loupe/artifacts/veridox-ai-loupe-react-2.0.0.tgz ../loupe/artifacts/veridox-ai-loupe-pdf-2.0.0.tgz
+npm install https://tryloupe.lovable.app/downloads/veridox-ai-loupe-0.1.0.tgz
 ```
 
-For Word files, install `veridox-ai-loupe-docx-3.0.2.tgz` instead of the PDF archive. For images, install `veridox-ai-loupe-image-2.0.0.tgz`. Install Core alongside the selected adapters. These package names are not being offered on public npm by this repository. Current access and reuse remain subject to [LICENSE](../LICENSE).
+One prebuilt package includes the core, PDF, DOCX and image adapters, plus optional React bindings. No GitHub login, clone or library build is required. Plain TypeScript apps do not need React; the example below uses React and React DOM >=18 from your app.
 
-Requires React `>=18` (`react` and `react-dom` are peer dependencies). The root package is private because it is a workspace, not the package consumers install.
+Free for non-production evaluation and prototyping. Commercial or production use requires separate written permission from Veridox. See the [download licence](https://tryloupe.lovable.app/downloads/LOUPE-EVALUATION-LICENSE.txt). The public [plain TypeScript example](https://tryloupe.lovable.app/downloads/README.md) includes file selection and mounting.
 
 ## Quick Example
 
 ```tsx
 import type { ChangeEvent } from 'react';
-import { ViewerStore } from '@veridox-ai/loupe-core';
-import { ViewerProvider, ViewerSurface } from '@veridox-ai/loupe-react';
-import { useViewer, usePageNavigation, useZoom } from '@veridox-ai/loupe-react';
-import { createPdfAdapterFactory } from '@veridox-ai/loupe-pdf';
+import { ViewerStore } from '@veridox-ai/loupe';
+import { ViewerProvider, ViewerSurface } from '@veridox-ai/loupe/react';
+import { useViewer, usePageNavigation, useZoom } from '@veridox-ai/loupe/react';
+import { createPdfAdapterFactory } from '@veridox-ai/loupe/pdf';
 
 const store = new ViewerStore();
 store.registerFactory(createPdfAdapterFactory());
@@ -104,9 +102,9 @@ function App() {
 ## Registering Adapters
 
 ```ts
-import { createPdfAdapterFactory } from '@veridox-ai/loupe-pdf';
-import { createImageAdapterFactory } from '@veridox-ai/loupe-image';
-import { createDocxAdapterFactory } from '@veridox-ai/loupe-docx';
+import { createPdfAdapterFactory } from '@veridox-ai/loupe/pdf';
+import { createImageAdapterFactory } from '@veridox-ai/loupe/image';
+import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
 
 const store = new ViewerStore();
 store.registerFactory(createPdfAdapterFactory());
@@ -123,7 +121,7 @@ store.registerFactory(createDocxAdapterFactory({ thumbnails: true }));
 
 ## Asset delivery
 
-Runtime assets ship inside the packages and must be reachable at runtime.
+Runtime assets ship inside the package and must be reachable at runtime.
 By default each is resolved relative to its module via `import.meta.url` (so a
 standard bundler that emits the package's `dist/` assets works out of the box),
 and each can be overridden through its factory option if you host the asset
@@ -131,9 +129,9 @@ yourself:
 
 | Package | Asset (default path) | Override |
 |---|---|---|
-| `@veridox-ai/loupe-pdf` | `dist/workers/pdf.worker.js` | `createPdfAdapterFactory(workerSrc)` |
-| `@veridox-ai/loupe-image` | `dist/workers/tiff.worker.js` | `createImageAdapterFactory({ tiffWorkerUrl })` |
-| `@veridox-ai/loupe-docx` | `@silurus/ooxml/dist/docx_parser_bg.wasm` (+ worker) | `createDocxAdapterFactory({ wasmUrl })` |
+| `@veridox-ai/loupe/pdf` | `dist/pdf/workers/pdf.worker.js` | `createPdfAdapterFactory(workerSrc)` |
+| `@veridox-ai/loupe/image` | `dist/image/workers/tiff.worker.js` | `createImageAdapterFactory({ tiffWorkerUrl })` |
+| `@veridox-ai/loupe/docx` | `@silurus/ooxml/dist/docx_parser_bg.wasm` (+ worker) | `createDocxAdapterFactory({ wasmUrl })` |
 
 ```ts
 store.registerFactory(createPdfAdapterFactory('/assets/pdf.worker.js'));
@@ -162,7 +160,7 @@ object-src 'none'
 
 The library is tested under this CSP in CI.
 
-## Working Example
+## Repository reference viewer (maintainers)
 
 Run the example viewer from a fresh clone:
 

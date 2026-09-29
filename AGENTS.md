@@ -101,4 +101,4 @@ The workflow is saved as `docs/ci-workflow.yml`; it must be activated by a maint
 
 ## Repository ownership
 
-This library is maintained through GitHub. `site/` is an independent export of the Lovable landing-page project and is not an npm workspace. Keep its Bun dependencies separate. Preserve published Git history. Do not enable the upstream private-registry release workflow here. Package distribution is through local archives until public reuse terms are selected.
+This library is maintained through GitHub. `site/` is an independent export of the Lovable landing-page project and is not an npm workspace. Keep its Bun dependencies separate. Preserve published Git history. Do not enable the upstream private-registry release workflow here. The compiled all-in-one package is distributed publicly under distribution/LICENSE for non-production evaluation; commercial or production use requires written permission. Source repository licensing remains separate.
