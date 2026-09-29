@@ -1,3 +1,4 @@
+import { PACKAGE_NAME } from "@/lib/release";
 export const DEMO_URL = "https://veridocx.lovable.app";
 
 export type SectionId =
@@ -213,3 +214,34 @@ export const ASSETS_COMMAND = "npx loupe-assets public/loupe";
 export const ASSETS_SNIPPET = `createPdfAdapterFactory('/loupe/pdf.worker.js');
 createImageAdapterFactory({ tiffWorkerUrl: '/loupe/tiff.worker.js' });
 createDocxAdapterFactory({ wasmUrl: '/loupe/docx_parser_bg.wasm' });`;
+
+/* ---- Per-format rows for /developers#formats. /original keeps MATRIX_ROWS. ---- */
+
+type DevSupport = "yes" | "no" | "optional";
+
+export type DeveloperFormatRow = {
+  format: string;
+  extensions: string[];
+  entry: string;
+  values: DevSupport[];
+};
+
+const DEV_PKG = PACKAGE_NAME;
+const ALL: DevSupport[] = ["yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes"];
+const WORD: DevSupport[] = ["yes", "yes", "yes", "yes", "yes", "optional", "no", "no", "no"];
+const TIFF: DevSupport[] = ["yes", "yes", "yes", "no", "no", "yes", "yes", "no", "no"];
+const IMG: DevSupport[] = ["yes", "no", "yes", "no", "no", "no", "no", "no", "no"];
+
+export const DEVELOPER_FORMAT_ROWS: DeveloperFormatRow[] = [
+  { format: "PDF", extensions: [".pdf"], entry: `${DEV_PKG}/pdf`, values: ALL },
+  { format: "DOCX", extensions: [".docx"], entry: `${DEV_PKG}/docx`, values: WORD },
+  { format: "DOCM", extensions: [".docm"], entry: `${DEV_PKG}/docx`, values: WORD },
+  { format: "JPEG", extensions: [".jpg", ".jpeg"], entry: `${DEV_PKG}/image`, values: IMG },
+  { format: "PNG", extensions: [".png"], entry: `${DEV_PKG}/image`, values: IMG },
+  { format: "GIF", extensions: [".gif"], entry: `${DEV_PKG}/image`, values: IMG },
+  { format: "WebP", extensions: [".webp"], entry: `${DEV_PKG}/image`, values: IMG },
+  { format: "SVG", extensions: [".svg"], entry: `${DEV_PKG}/image`, values: IMG },
+  { format: "TIFF", extensions: [".tif", ".tiff"], entry: `${DEV_PKG}/image`, values: TIFF },
+  { format: "HEIC", extensions: [".heic"], entry: `${DEV_PKG}/image`, values: IMG },
+  { format: "HEIF", extensions: [".heif"], entry: `${DEV_PKG}/image`, values: IMG },
+];

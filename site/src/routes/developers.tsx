@@ -10,10 +10,9 @@ import {
   ASSETS_SNIPPET,
   CLEANUP_SNIPPET,
   ENTRY_POINTS,
-  FORMAT_ENTRY,
   HTML_SNIPPET,
   MATRIX_COLUMNS,
-  MATRIX_ROWS,
+  DEVELOPER_FORMAT_ROWS,
   RUNTIME_ASSETS,
   VITE_SNIPPET,
 } from "@/components/loupe/site-data";
@@ -106,7 +105,12 @@ function Cell({ value }: { value: string }) {
         <span className="sr-only">Not provided</span>
       </>
     );
-  if (value === "optional") return <span className="font-mono text-xs text-navy-soft">opt-in</span>;
+  if (value === "optional")
+    return (
+      <span className="font-mono text-xs text-navy-soft">
+        opt-in<span className="sr-only"> (supported when enabled)</span>
+      </span>
+    );
   return <span className="font-mono text-xs text-navy-soft">{value}</span>;
 }
 
@@ -342,12 +346,15 @@ function DevelopersPage() {
                 </tr>
               </thead>
               <tbody>
-                {MATRIX_ROWS.map((row) => (
+                {DEVELOPER_FORMAT_ROWS.map((row) => (
                   <tr key={row.format} className="border-b border-border/70 last:border-0">
-                    <th scope="row" className="p-3 text-left align-top">
-                      <span className="font-semibold">{row.format}</span>
+                    <th scope="row" className="p-3 text-left align-top whitespace-nowrap">
+                      <span className="font-semibold">{row.format}</span>{" "}
+                      <span className="font-mono text-xs font-normal text-navy-soft">
+                        {row.extensions.join(", ")}
+                      </span>
                       <span className="block font-mono text-[0.6875rem] font-normal text-muted-foreground">
-                        {FORMAT_ENTRY[row.format] ?? `${PACKAGE_NAME}/image · ${row.detail}`}
+                        {row.entry}
                       </span>
                     </th>
                     {row.values.map((v, i) => (
@@ -360,9 +367,15 @@ function DevelopersPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-            Image support does not include OCR, so images have no text selection or search.
+          <p className="mt-3 text-xs text-muted-foreground">
+            Key: check = supported, dash = not provided, opt-in = off by default, enable in adapter options.
           </p>
+          <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground">
+            <li>Word thumbnails are opt-in. DOCM files are viewed as Word documents; macros are never run.</li>
+            <li>Only TIFF exposes pages, thumbnails and rotation among images; other images are a single view without rotation.</li>
+            <li>HEIC and HEIF use a decoder that loads only when such a file is opened.</li>
+            <li>No OCR: images have no text selection or search. PDF search and selection need text in the document.</li>
+          </ul>
         </section>
 
         <section id="runtime-assets" aria-labelledby="runtime-assets-title">
