@@ -2,12 +2,12 @@ Loupe Evaluation Licence
 Copyright (c) 2026 Veridox. All rights reserved.
 
 Veridox permits you to download, install, run and internally modify the Loupe
-package distributed with this licence, without charge, solely to evaluate,
+software (source or compiled) distributed with this licence, without charge, solely to evaluate,
 test and prototype integrations in a non-production environment. This
 permission includes internal evaluation by commercial organisations.
 
 Commercial or production use requires separate written permission from
-Veridox. You may not redistribute, sublicense, sell, or make the Loupe package
+Veridox. You may not redistribute, sublicense, sell, or make the Loupe software
 or modified versions available to third parties under this evaluation licence.
 Preserve this licence and all copyright notices in permitted copies.
 

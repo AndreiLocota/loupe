@@ -5,7 +5,7 @@ Routes:
 - `/` — Loupe homepage: the interactive Word (.docx/.docm) inspector. Open a file or a sample to see the real Loupe viewer with retained comments, tracked changes, findings and timeline. Everything runs in the browser.
 - `/try` — legacy alias, redirects to `/`.
 - `/playground` — multi-format document workspace with eight real sample formats (PDF, DOCX, TIFF, PNG, JPEG, WebP, GIF and SVG), local file tabs, capability-aware controls and integration excerpts. Its top toolbar includes page jumping, zoom presets, fit controls, rotation, layers/notes/marker shortcuts, fullscreen and original-file download.
-- `/developers` — integration-first page (quick start, install, API excerpt, format support, runtime assets). Links and access state come from `src/lib/release.ts`; flip `PUBLIC_LIBRARY_AVAILABLE` (and `LICENSE_SUMMARY`) when the repository goes public.
+- `/developers` — one-package install, copyable JSON prompt for AI agents, integration examples, API excerpt, format support and runtime assets. Public release and source links come from `src/lib/release.ts`.
 - `/original` — archived first developer site (noindex), kept unchanged for reference.
 
 ## Development
@@ -20,7 +20,7 @@ bun run build    # prebuild does the same
 
 ## Notes for the inspector
 
-- Loupe packages are vendored in `vendor/` (private, `UNLICENSED`, © Veridox — see `vendor/README.md`). They are not open source or publicly available.
+- Loupe packages are vendored in `vendor/` under their internal names. The public source and compiled package use the evaluation licence (© Veridox); they are not open source.
 - The DOCX engine is browser-only; `vite.config.ts` swaps it for a throwing stub in the server build.
 - Inspector colours are scoped to the inspector (`.loupe-try` / `html.loupe-try-active` in `src/styles.css`); the `dark` class is removed when leaving it.
 - Samples live in `public/sample-*.docx`.
@@ -29,8 +29,8 @@ bun run build    # prebuild does the same
 
 Live site: https://tryloupe.lovable.app/ — developer guide at `/developers`, multi-format demo at `/playground`.
 
-Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `2de1e46ae8e476457dcdb6ef8794b6c3bc214af4`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
+Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `12d31d3dffd7f719b13cead8863d1a07aca904c2`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
 
 The background asset is included under `public/__l5e/assets-v1/` so this export can run independently of Lovable asset hosting.
 
-Public evaluation downloads live under `/downloads/`. The developer guide uses one prebuilt package; GitHub source access remains private.
+The developer guide installs `@andreilocota/loupe` 0.1.1 from a public GitHub release in `AndreiLocota/loupe`. Source is public under evaluation terms. `/downloads/` retains the licence, README, checksums and legacy 0.1.0 archive.

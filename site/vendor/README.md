@@ -1,6 +1,6 @@
 # Bundled Loupe
 
-Vendored for the Veridox DocX Viewer. Private Veridox code; preserve original package license and attribution (UNLICENSED, © Veridox).
+Vendored for the Loupe document viewer. Public source and compiled distributions are available under the Loupe evaluation licence; preserve copyright notices (© Veridox). Internal package names are retained for build compatibility.
 Upstream: https://github.com/veridox-ai/tools.loupe
 Pinned commit: 6edcf2ceeda0be7991708bc75f5cdbaf7f087628
 Versions: core 0.3.1, DOCX 3.0.2.

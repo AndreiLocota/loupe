@@ -169,26 +169,26 @@ export const RUNTIME_ASSETS = [
   },
 ];
 
-/* ---- Single-package (@veridox-ai/loupe) content for /developers. /original keeps the entries above. ---- */
+/* ---- Single-package (@andreilocota/loupe) content for /developers. /original keeps the entries above. ---- */
 
 export const ENTRY_POINTS = [
-  { path: "@veridox-ai/loupe", note: "Headless core: ViewerStore, types, errors, events" },
-  { path: "@veridox-ai/loupe/docx", note: "Word adapter: createDocxAdapterFactory" },
-  { path: "@veridox-ai/loupe/pdf", note: "PDF adapter: createPdfAdapterFactory" },
-  { path: "@veridox-ai/loupe/image", note: "Image adapter: createImageAdapterFactory" },
-  { path: "@veridox-ai/loupe/react", note: "Optional React bindings; needs your react + react-dom >= 18" },
+  { path: "@andreilocota/loupe", note: "Headless core: ViewerStore, types, errors, events" },
+  { path: "@andreilocota/loupe/docx", note: "Word adapter: createDocxAdapterFactory" },
+  { path: "@andreilocota/loupe/pdf", note: "PDF adapter: createPdfAdapterFactory" },
+  { path: "@andreilocota/loupe/image", note: "Image adapter: createImageAdapterFactory" },
+  { path: "@andreilocota/loupe/react", note: "Optional React bindings; needs your react + react-dom >= 18" },
 ];
 
 export const FORMAT_ENTRY: Record<string, string> = {
-  PDF: "@veridox-ai/loupe/pdf",
-  DOCX: "@veridox-ai/loupe/docx",
+  PDF: "@andreilocota/loupe/pdf",
+  DOCX: "@andreilocota/loupe/docx",
 };
 
 export const HTML_SNIPPET = `<input id="file" type="file" accept=".docx,.docm" />
 <div id="viewer" style="height: 75vh"></div>`;
 
-export const VITE_SNIPPET = `import { ViewerStore } from '@veridox-ai/loupe';
-import { createDocxAdapterFactory } from '@veridox-ai/loupe/docx';
+export const VITE_SNIPPET = `import { ViewerStore } from '@andreilocota/loupe';
+import { createDocxAdapterFactory } from '@andreilocota/loupe/docx';
 
 const viewer = new ViewerStore();
 viewer.registerFactory(createDocxAdapterFactory());

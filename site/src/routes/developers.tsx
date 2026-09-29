@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { ArrowUpRight, Check, ChevronDown, Download, Minus } from "lucide-react";
 
+import { AgentPrompt } from "@/components/loupe/agent-prompt";
 import { CodePanel } from "@/components/loupe/code-panel";
 import {
   API_CARDS,
@@ -24,6 +25,7 @@ import {
   LINK_ACCESS_SUFFIX,
   NODE_VERSION,
   PACKAGE_INSTALL_COMMAND,
+  PACKAGE_NAME,
   PACKAGE_README_PATH,
   PACKAGE_SHA256,
   PACKAGE_URL,
@@ -52,6 +54,7 @@ export const Route = createFileRoute("/developers")({
 
 const NAV = [
   { id: "install", label: "Install" },
+  { id: "ai-agent", label: "AI agent" },
   { id: "integrate", label: "Open a Word file" },
   { id: "what-you-tried", label: "What you tried" },
   { id: "api", label: "API" },
@@ -194,20 +197,29 @@ function DevelopersPage() {
             </a>
             <Local href={EVALUATION_LICENSE_PATH}>Evaluation licence</Local>
             <Local href={PACKAGE_README_PATH}>Package README</Local>
+            <Ext href={REPO_URL}>Source on GitHub</Ext>
           </div>
           <ul className="mt-5 space-y-1.5 text-sm leading-relaxed text-muted-foreground">
             <li>
-              One package (<code className="font-mono text-foreground">@veridox-ai/loupe</code>{" "}
+              One package (<code className="font-mono text-foreground">{PACKAGE_NAME}</code>{" "}
               {PACKAGE_VERSION}) includes PDF, Word, images and optional React bindings.
             </li>
             <li>No GitHub account, repository clone or Loupe build is needed.</li>
             <li>Your app still needs a bundler, such as Vite. We develop with {NODE_VERSION}.</li>
             <li>
-              Downloaded from this site, not the public npm registry.{" "}
+              Downloaded from the Loupe GitHub release, not the public npm registry.{" "}
               <Local href={CHECKSUMS_PATH}>SHA-256</Local>:{" "}
               <code className="font-mono text-[0.6875rem] break-all">{PACKAGE_SHA256}</code>
             </li>
           </ul>
+        </section>
+
+        <section id="ai-agent" aria-labelledby="ai-agent-title">
+          <H2 id="ai-agent" eyebrow="Shortcut" title="Let your AI agent do it" />
+          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+            Copy this JSON into your coding agent to add Loupe to your app.
+          </p>
+          <AgentPrompt />
         </section>
 
         <section id="integrate" aria-labelledby="integrate-title">
@@ -225,9 +237,9 @@ function DevelopersPage() {
           <CodePanel code={CLEANUP_SNIPPET} label="Cleanup" />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
             For PDF use <code className="font-mono text-foreground">createPdfAdapterFactory</code>{" "}
-            from <code className="font-mono text-foreground">@veridox-ai/loupe/pdf</code>; for
+            from <code className="font-mono text-foreground">{PACKAGE_NAME}/pdf</code>; for
             images use <code className="font-mono text-foreground">createImageAdapterFactory</code>{" "}
-            from <code className="font-mono text-foreground">@veridox-ai/loupe/image</code>. Vite
+            from <code className="font-mono text-foreground">{PACKAGE_NAME}/image</code>. Vite
             emits the PDF, TIFF and Word workers and the WASM file automatically. In SSR apps,
             import adapters only in browser code.{" "}
             <Link
@@ -335,7 +347,7 @@ function DevelopersPage() {
                     <th scope="row" className="p-3 text-left align-top">
                       <span className="font-semibold">{row.format}</span>
                       <span className="block font-mono text-[0.6875rem] font-normal text-muted-foreground">
-                        {FORMAT_ENTRY[row.format] ?? `@veridox-ai/loupe/image · ${row.detail}`}
+                        {FORMAT_ENTRY[row.format] ?? `${PACKAGE_NAME}/image · ${row.detail}`}
                       </span>
                     </th>
                     {row.values.map((v, i) => (
@@ -388,12 +400,12 @@ function DevelopersPage() {
           <H2 id="license" eyebrow="Terms" title="Licence" />
           <p className="text-sm leading-relaxed text-muted-foreground">
             {LICENSE_SUMMARY} Loupe is not open source. The{" "}
-            <Local href={EVALUATION_LICENSE_PATH}>evaluation licence</Local> included in the
-            downloaded package is the complete terms for that package.
+            <Local href={EVALUATION_LICENSE_PATH}>evaluation licence</Local> is the complete terms
+            for the package and the source.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            {ACCESS_NOTE} Source (proprietary <Ext href={LICENSE_URL}>LICENSE</Ext>):{" "}
-            <Ext href={REPO_URL}>AndreiLocota/loupe</Ext>
+            Source on GitHub, under the same evaluation terms (
+            <Ext href={LICENSE_URL}>LICENSE</Ext>): <Ext href={REPO_URL}>AndreiLocota/loupe</Ext>
           </p>
         </section>
       </main>
