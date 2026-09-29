@@ -4,6 +4,7 @@ import { ArrowUpRight, Check, ChevronDown, Download, Minus } from "lucide-react"
 
 import { AgentPrompt } from "@/components/loupe/agent-prompt";
 import { CodePanel } from "@/components/loupe/code-panel";
+import { LaunchVideo } from "@/components/loupe/launch-video";
 import {
   API_CARDS,
   ASSETS_COMMAND,
@@ -160,7 +161,8 @@ function DevelopersPage() {
           aria-hidden
           className="absolute inset-0 bg-gradient-to-b from-transparent to-background"
         />
-        <div className="relative mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
+        <div className="relative mx-auto grid max-w-5xl gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+          <div className="min-w-0">
           <p className="eyebrow">Loupe for developers</p>
           <h1 className="mt-3 max-w-2xl text-3xl leading-[1.1] font-semibold sm:text-5xl">
             Add document viewing to your app.
@@ -180,6 +182,10 @@ function DevelopersPage() {
               </a>
             ))}
           </nav>
+          </div>
+          <div className="w-full lg:w-[380px]">
+            <LaunchVideo />
+          </div>
         </div>
       </section>
 

@@ -29,8 +29,10 @@ bun run build    # prebuild does the same
 
 Live site: https://tryloupe.lovable.app/ — developer guide at `/developers`, multi-format demo at `/playground`.
 
-Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `55d025543a7ecaee4bd125a763a61c4ae1a92b4f`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
+Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `ba7173315b2d5fbb7225de24c3ae0905b6efa9ac`. Lovable remains authoritative for the website; this folder is a saved copy and does not automatically synchronize. The library lives at the repository root.
 
 The background asset is included under `public/__l5e/assets-v1/` so this export can run independently of Lovable asset hosting.
 
 The developer guide installs `@andreilocota/loupe` 0.1.1 from a public GitHub release in `AndreiLocota/loupe`. Source is public under evaluation terms. `/downloads/` retains the licence, README, checksums and legacy 0.1.0 archive.
+
+The developer hero includes the user-provided 16-second launch video in `public/media/`, with its audio stream removed. The inline loop pauses offscreen and respects reduced-motion preferences and manual pause.
