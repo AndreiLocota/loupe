@@ -294,6 +294,46 @@ largePdf += "%%EOF\n";
 
 await write(join(CORPUS.pathname, "large-20page.pdf"), largePdf);
 
+// ── Search-stress PDF (VDX-245) ──
+// One page whose text items split mid-phrase the way real PDFs do: a font
+// change inside "POLICY EXCESS WAIVER" (bold EXCESS), the same phrase wrapping
+// onto a new line, and an unsplit control phrase.
+{
+  let out = "%PDF-1.4\n";
+  const objOffsets: number[] = [];
+  const addObj = (content: string): void => {
+    objOffsets.push(out.length);
+    out += `${objOffsets.length} 0 obj\n${content}\nendobj\n`;
+  };
+  const stream = [
+    "BT",
+    "/F1 18 Tf 72 700 Td (POLICY ) Tj",
+    "/F2 18 Tf (EXCESS) Tj",
+    "/F1 18 Tf ( WAIVER for this claim.) Tj",
+    "0 -36 Td (The POLICY EXCESS) Tj",
+    "0 -24 Td (WAIVER wraps onto a new line.) Tj",
+    "0 -48 Td (UNSPLIT CONTROL PHRASE) Tj",
+    "ET",
+  ].join("\n");
+  addObj("<< /Type /Catalog /Pages 2 0 R >>");
+  addObj("<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
+  addObj(
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>",
+  );
+  addObj(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+  addObj("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  addObj("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  const xrefAt = out.length;
+  out += `xref\n0 ${objOffsets.length + 1}\n0000000000 65535 f \n`;
+  for (const o of objOffsets) {
+    out += `${String(o).padStart(10, "0")} 00000 n \n`;
+  }
+  out +=
+    `trailer << /Size ${objOffsets.length + 1} /Root 1 0 R >>\n` +
+    `startxref\n${xrefAt}\n%%EOF\n`;
+  await write(join(CORPUS.pathname, "search-stress.pdf"), out);
+}
+
 // ── PDF with optional content groups (layers) ──
 // One page with two OCGs — a blue rule and a "WATERMARK" — each wrapped in an
 // /OC marked-content section. Exercises layer enumeration and visibility
@@ -698,6 +738,7 @@ Corpus files generated:
     simple.pdf            - Single-page PDF with "Hello World"
     multipage.pdf         - 3-page PDF (page navigation)
     large-20page.pdf      - 20-page PDF (perf/scroll testing)
+    search-stress.pdf     - PDF with phrases split by a style change / line wrap (search)
     layers.pdf            - PDF with 2 optional content groups (layer toggling)
     annotations.pdf       - PDF with Square/FreeText/Link annotations (toggle)
     simple.docx           - Simple DOCX with 2 paragraphs

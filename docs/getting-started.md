@@ -5,7 +5,7 @@
 Use Node.js 24 LTS for development. In your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.3/andreilocota-loupe-0.1.3.tgz
 ```
 
 One prebuilt package includes the core, PDF, DOCX and image adapters, plus optional React bindings. No GitHub login, clone or library build is required. Plain TypeScript apps do not need React; the example below uses React and React DOM >=18 from your app.

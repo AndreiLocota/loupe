@@ -2,7 +2,7 @@
 
 A headless document viewer library for **PDF, DOCX, and images**. Rendering happens in the browser; no Loupe server, API key, or account is needed at runtime. Your app provides the toolbar and surrounding interface. TypeScript core, optional React bindings.
 
-[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz)
+[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/download/v0.1.3/andreilocota-loupe-0.1.3.tgz)
 
 ## From the demo to your app
 
@@ -11,7 +11,7 @@ The browser demo is a Word inspector built with Loupe. Loupe supplies document r
 Install the complete viewer package in your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.3/andreilocota-loupe-0.1.3.tgz
 ```
 
 This prebuilt package includes the core, PDF, Word and image adapters, and optional React bindings. No GitHub account, repository clone or Loupe build is needed. Start with the [integration guide](docs/getting-started.md) or the [public package guide](https://tryloupe.lovable.app/downloads/README.md).
@@ -41,7 +41,7 @@ The public `@andreilocota/loupe` archive combines these implementation packages;
 |---|---|---|
 | `@veridox-ai/loupe-core` | 0.3.1 | ViewerStore, adapter interface, document detection and events |
 | `@veridox-ai/loupe-docx` | 3.0.2 | Word rendering, pagination, text selection and search |
-| `@veridox-ai/loupe-pdf` | 2.0.0 | PDF rendering, selection, search, layers and annotations |
+| `@veridox-ai/loupe-pdf` | 2.0.1 | PDF rendering, selection, search, layers and annotations |
 | `@veridox-ai/loupe-image` | 2.0.0 | JPEG, PNG, GIF, WebP, SVG, TIFF and HEIC |
 | `@veridox-ai/loupe-react` | 2.0.0 | React provider, viewer surface and hooks |
 

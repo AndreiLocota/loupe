@@ -408,3 +408,158 @@ describe("PdfAdapter search geometry and scrolling (VDX-175)", () => {
     expect(() => adapter.setActiveSearchMatch(null)).not.toThrow();
   });
 });
+
+describe("PdfAdapter stitched search across item boundaries (VDX-245)", () => {
+  const PDF_SOURCE = {
+    data: new Uint8Array([0x25, 0x50, 0x44, 0x46]).buffer as ArrayBuffer,
+  };
+  let adapter: PdfAdapter;
+  let mount: HTMLElement;
+
+  beforeEach(() => {
+    adapter = new PdfAdapter("/fake/worker.mjs");
+    mount = document.createElement("div");
+    document.body.appendChild(mount);
+  });
+
+  async function collect(query: string) {
+    const out = [];
+    for await (const m of adapter.search(query)) out.push(m);
+    return out;
+  }
+
+  /** Single-page document whose text content is exactly `items`. */
+  function mockSinglePageDoc(
+    items: Array<{
+      str: string;
+      transform: number[];
+      width: number;
+      height: number;
+      hasEOL?: boolean;
+    }>,
+  ) {
+    vi.mocked(getDocument).mockReturnValueOnce({
+      promise: Promise.resolve({
+        numPages: 1,
+        getPage: vi.fn(async () => ({
+          getViewport: vi.fn(() => ({
+            width: 612,
+            height: 792,
+            transform: [1, 0, 0, -1, 0, 792],
+          })),
+          getTextContent: vi.fn(async () => ({ items, styles: {} })),
+          getAnnotations: vi.fn(async () => []),
+          render: vi.fn(() => ({
+            promise: Promise.resolve(),
+            cancel: vi.fn(),
+          })),
+          rotate: 0,
+        })),
+        cleanup: vi.fn(),
+        getOptionalContentConfig: vi.fn(async () => null),
+      }),
+      destroy: vi.fn(async () => {}),
+    } as unknown as ReturnType<typeof getDocument>);
+  }
+
+  // 'POLICY EXCESS WAIVER' with 'EXCESS' bold: pdf.js starts a new item at
+  // each style change, so the phrase spans three items.
+  const boldSplitItems = [
+    { str: "POLICY ", transform: [1, 0, 0, 1, 0, 700], width: 70, height: 10 },
+    { str: "EXCESS", transform: [1, 0, 0, 1, 70, 700], width: 60, height: 10 },
+    {
+      str: " WAIVER for this claim.",
+      transform: [1, 0, 0, 1, 130, 700],
+      width: 230,
+      height: 10,
+    },
+  ];
+
+  it("finds a phrase split across items by a style change, one rect per item", async () => {
+    mockSinglePageDoc(boldSplitItems);
+    await adapter.load(PDF_SOURCE, mount, {});
+
+    const matches = await collect("POLICY EXCESS WAIVER");
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.text).toBe("POLICY EXCESS WAIVER");
+    // Page height 792, item height 10 → y = 792 − (700 + 10) = 82.
+    expect(matches[0]?.bounds).toEqual([
+      { x: 0, y: 82, width: 70, height: 10 },
+      { x: 70, y: 82, width: 60, height: 10 },
+      { x: 130, y: 82, width: 70, height: 10 },
+    ]);
+  });
+
+  it("finds a phrase wrapping onto a new line as one match with two rects", async () => {
+    mockSinglePageDoc([
+      {
+        str: "POLICY EXCESS",
+        transform: [1, 0, 0, 1, 0, 700],
+        width: 130,
+        height: 10,
+        hasEOL: true,
+      },
+      {
+        str: "WAIVER for this claim.",
+        transform: [1, 0, 0, 1, 0, 680],
+        width: 220,
+        height: 10,
+      },
+    ]);
+    await adapter.load(PDF_SOURCE, mount, {});
+
+    const matches = await collect("POLICY EXCESS WAIVER");
+    // One match — two painted boxes must still count once.
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.bounds).toHaveLength(2);
+  });
+
+  it("keeps a line-end flag carried by an empty item", async () => {
+    mockSinglePageDoc([
+      {
+        str: "POLICY EXCESS",
+        transform: [1, 0, 0, 1, 0, 700],
+        width: 130,
+        height: 10,
+      },
+      {
+        str: "",
+        transform: [1, 0, 0, 1, 130, 700],
+        width: 0,
+        height: 0,
+        hasEOL: true,
+      },
+      {
+        str: "WAIVER",
+        transform: [1, 0, 0, 1, 0, 680],
+        width: 60,
+        height: 10,
+      },
+    ]);
+    await adapter.load(PDF_SOURCE, mount, {});
+
+    const matches = await collect("EXCESS WAIVER");
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.bounds).toHaveLength(2);
+  });
+
+  it("search() and findMatches() agree on cross-item matches", async () => {
+    mockSinglePageDoc(boldSplitItems);
+    await adapter.load(PDF_SOURCE, mount, {});
+
+    const searched = await collect("POLICY EXCESS WAIVER");
+    const located = await adapter.findMatches("POLICY EXCESS WAIVER");
+    expect(searched.map((m) => m.bounds)).toEqual(located.map((m) => m.bounds));
+  });
+
+  it("single-word searches within one item are unchanged", async () => {
+    mockSinglePageDoc(boldSplitItems);
+    await adapter.load(PDF_SOURCE, mount, {});
+
+    const matches = await collect("EXCESS");
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.bounds).toEqual([
+      { x: 70, y: 82, width: 60, height: 10 },
+    ]);
+  });
+});

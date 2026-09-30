@@ -416,3 +416,99 @@ test.describe("Scroll-tracked current page (VDX-188, real layout)", () => {
     expect(events.filter((p) => p >= 2 && p <= 19)).toEqual([]);
   });
 });
+
+// ── Stitched search across item boundaries (VDX-245) ──────────────────────────
+// pdf.js ends a text item at every font change and line end, so a phrase that
+// crosses either never sits in one item. The fixture's first line splits
+// "POLICY EXCESS WAIVER" across five items (bold EXCESS); its second phrase
+// wraps onto a new line. Highlight boxes need real layout — jsdom's
+// Range.getClientRects() is empty — so painted-ordinal assertions live here.
+
+test.describe("Stitched search across item boundaries (VDX-245)", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(FIXTURE);
+    await page.waitForFunction(
+      () =>
+        (window as unknown as Record<string, unknown>).__viewerReady === true,
+      undefined,
+      { timeout: 10000 },
+    );
+    await page.evaluate(async () => {
+      await window.__load("/corpus/production/search-stress.pdf");
+    });
+    await page.waitForFunction(
+      () => window.__viewerStore?.getState().status === "loaded",
+      undefined,
+      { timeout: 15000 },
+    );
+  });
+
+  test("phrase spanning a style change and a line wrap is found and painted", async ({
+    page,
+  }) => {
+    await page.evaluate(async () => {
+      await window.__viewerStore.search("POLICY EXCESS WAIVER");
+    });
+
+    // Two occurrences: the bold-split line and the wrapped phrase.
+    const matchCount = await page.evaluate(
+      () => window.__viewerStore.getState().searchMatches.length,
+    );
+    expect(matchCount).toBe(2);
+
+    // Every box carries a match ordinal; distinct ordinals equal the count,
+    // so the counter and the painted highlights cannot drift apart.
+    const boxes = page.locator(".loupe-search-highlight");
+    await expect
+      .poll(async () => {
+        const ordinals = await boxes.evaluateAll((els) =>
+          els.map((el) => (el as HTMLElement).dataset.loupeMatch),
+        );
+        return new Set(ordinals).size;
+      })
+      .toBe(2);
+
+    // The bold-split match paints one box per item it crosses (all three
+    // words), the wrapped match one box per line.
+    const perOrdinal = await boxes.evaluateAll((els) => {
+      const counts: Record<string, number> = {};
+      for (const el of els) {
+        const key = (el as HTMLElement).dataset.loupeMatch ?? "?";
+        counts[key] = (counts[key] ?? 0) + 1;
+      }
+      return counts;
+    });
+    expect(perOrdinal["0"]).toBeGreaterThanOrEqual(3);
+    expect(perOrdinal["1"]).toBe(2);
+  });
+
+  test("a wrapped match counts once and both its boxes activate together", async ({
+    page,
+  }) => {
+    await page.evaluate(async () => {
+      await window.__viewerStore.search("POLICY EXCESS WAIVER");
+      await window.__viewerStore.scrollToSearchMatch(1); // the wrapped match
+    });
+
+    const active = page.locator(".loupe-search-highlight-active");
+    await expect(active).toHaveCount(2, { timeout: 10000 });
+    for (const el of await active.all()) {
+      await expect(el).toHaveAttribute("data-loupe-match", "1");
+    }
+  });
+
+  test("single-style, single-line searches are unchanged", async ({ page }) => {
+    await page.evaluate(async () => {
+      await window.__viewerStore.search("UNSPLIT CONTROL PHRASE");
+    });
+
+    const matchCount = await page.evaluate(
+      () => window.__viewerStore.getState().searchMatches.length,
+    );
+    expect(matchCount).toBe(1);
+
+    const boxes = page.locator(".loupe-search-highlight");
+    await expect(boxes).toHaveCount(1, { timeout: 10000 });
+    await expect(boxes.first()).toHaveAttribute("data-loupe-match", "0");
+  });
+});

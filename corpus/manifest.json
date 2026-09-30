@@ -98,6 +98,16 @@
         "description": "20-page PDF for scroll performance and memory testing",
         "sha256": "9dc665fd33d6da48fee0f8e70b5888f839d89334af6887fda8e9b097ea19c8e1"
       },
+      "search-stress.pdf": {
+        "format": "pdf",
+        "pages": 1,
+        "features": [
+          "text_render",
+          "search"
+        ],
+        "description": "Single-page PDF whose text items split mid-phrase: a bold word inside a phrase, the phrase wrapping onto a new line, and an unsplit control phrase",
+        "sha256": "59a142b982e26e990962b75f908b11db61b7bc736c444e10e06ceeead8e45331"
+      },
       "layers.pdf": {
         "format": "pdf",
         "pages": 1,

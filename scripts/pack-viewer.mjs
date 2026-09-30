@@ -51,7 +51,7 @@ await cp(join(root, 'distribution/LICENSE'), join(stage, 'LICENSE'));
 await cp(join(root, 'distribution/README.md'), join(stage, 'README.md'));
 await cp(join(root, 'distribution/copy-assets.mjs'), join(stage, 'copy-assets.mjs'));
 await writeFile(join(stage, 'package.json'), JSON.stringify({
-  name: '@andreilocota/loupe', version: '0.1.2', type: 'module',
+  name: '@andreilocota/loupe', version: '0.1.3', type: 'module',
   description: 'Loupe document viewer: PDF, Word, images and optional React bindings in one package.',
   license: 'SEE LICENSE IN LICENSE', author: 'Veridox',
   repository: { type: 'git', url: 'git+https://github.com/AndreiLocota/loupe.git' },
@@ -71,5 +71,5 @@ const [archive] = JSON.parse(execFileSync(npm, ['pack', '--json', '--pack-destin
 for (const path of ['dist/pdf/workers/pdf.worker.js', 'dist/image/workers/tiff.worker.js', 'LICENSE']) {
   if (!archive.files.some(f => f.path === path)) throw Error(`Missing ${path}`);
 }
-await writeFile(join(out, 'viewer-package.json'), JSON.stringify({ file: archive.filename, integrity: archive.integrity, version: '0.1.2' }, null, 2) + '\n');
+await writeFile(join(out, 'viewer-package.json'), JSON.stringify({ file: archive.filename, integrity: archive.integrity, version: '0.1.3' }, null, 2) + '\n');
 console.log(`Single-package install: npm install ./${archive.filename}`);

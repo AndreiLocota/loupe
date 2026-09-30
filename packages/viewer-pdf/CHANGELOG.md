@@ -1,5 +1,22 @@
 # @veridox-ai/loupe-pdf
 
+## 2.0.1
+
+### Patch Changes
+
+- 26da0bf: PDF search now finds phrases that span a style change or a line break (VDX-245).
+
+  pdf.js ends a text item at every font change and line end, and matching ran
+  one item at a time, so a phrase crossing either boundary — `POLICY EXCESS
+WAIVER` with `EXCESS` in bold, or a phrase wrapping onto a new line — was
+  reported as "No matches" despite being visible on the page. Matching now runs
+  over each page's stitched text (flagged line ends stand in as a single space)
+  and maps every occurrence back onto the items it spans, so the match counter,
+  the marks overlay, and the highlight painter all share one enumeration. A
+  cross-item match paints one highlight box per item it crosses but counts —
+  and activates — as one match, keeping the count equal to the highlights on
+  screen.
+
 ## 2.0.0
 
 ### Patch Changes

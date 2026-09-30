@@ -23,6 +23,12 @@ import {
   getDocument,
   Util,
 } from "pdfjs-dist";
+import {
+  enumerateMatches,
+  filterTextItems,
+  type ItemSliceMatch,
+  type StitchItem,
+} from "./textStitch.js";
 
 // OptionalContentConfig isn't re-exported from the package entry; derive it.
 type OptionalContentConfig = Awaited<
@@ -117,6 +123,12 @@ interface PageSlot {
   // renders of the same page (e.g. double setZoom + IntersectionObserver).
   renderSeq: number;
   renderTask: { cancel(): void } | null;
+  // Text items backing the rendered text layer, and each item's index into
+  // the layer's spans (-1 for empty items, which get no span). Written by
+  // renderTextLayer in the same pass that rebuilds the DOM so the two cannot
+  // diverge; null until the text layer first renders.
+  stitchItems: StitchItem[] | null;
+  spanIndexByItem: number[] | null;
 }
 
 export class PdfAdapter implements DocumentAdapter {
@@ -512,7 +524,6 @@ export class PdfAdapter implements DocumentAdapter {
   async findMatches(query: string): Promise<SearchMatch[]> {
     const q = query.trim();
     if (!this.pdfDoc || !q) return [];
-    const lower = q.toLowerCase();
     const out: SearchMatch[] = [];
     for (let pageNum = 1; pageNum <= this.pdfDoc.numPages; pageNum++) {
       if (this.abortController.signal.aborted) break;
@@ -521,29 +532,34 @@ export class PdfAdapter implements DocumentAdapter {
       // top-left, native-units convention findMatches returns everywhere.
       const nativeH = page.getViewport({ scale: 1 }).height;
       const tc = await page.getTextContent();
-      const items = tc.items.filter(
-        (i): i is typeof i & { str: string } => "str" in i && Boolean(i.str),
-      ) as Array<{
-        str: string;
-        width: number;
-        height: number;
-        transform: number[];
-      }>;
-      for (const item of items) {
-        const str = item.str.toLowerCase();
-        let idx = str.indexOf(lower);
-        while (idx >= 0) {
-          out.push({
-            pageIndex: pageNum - 1,
-            text: item.str.substring(idx, idx + q.length),
-            bounds: [this.matchBounds(item, idx, q.length, nativeH)],
-          });
-          // Non-overlapping matches, mirroring the DOCX adapter's findMatches.
-          idx = str.indexOf(lower, idx + q.length);
-        }
+      const items = filterTextItems(tc.items);
+      for (const match of enumerateMatches(items, q)) {
+        out.push({
+          pageIndex: pageNum - 1,
+          text: match.text,
+          bounds: this.sliceBounds(items, match, nativeH),
+        });
       }
     }
     return out;
+  }
+
+  /** One rect per item slice — a match spanning a style change or a line
+   * break paints one box per item it crosses. */
+  private sliceBounds(
+    items: readonly StitchItem[],
+    match: ItemSliceMatch,
+    nativeH: number,
+  ): DocumentRect[] {
+    const rects: DocumentRect[] = [];
+    for (const slice of match.slices) {
+      const item = items[slice.itemIndex];
+      if (!item) continue;
+      rects.push(
+        this.matchBounds(item, slice.start, slice.end - slice.start, nativeH),
+      );
+    }
+    return rects;
   }
 
   /**
@@ -586,68 +602,51 @@ export class PdfAdapter implements DocumentAdapter {
     return {
       [Symbol.asyncIterator]() {
         let pageNum = 1;
-        let currentPage: Awaited<
-          ReturnType<PDFDocumentProxy["getPage"]>
-        > | null = null;
-        let items: {
-          str: string;
-          transform: number[];
-          width: number;
-          height: number;
-        }[] = [];
-        let itemIdx = 0;
-        let searchFrom = 0;
+        let items: StitchItem[] = [];
+        let pageMatches: ItemSliceMatch[] = [];
+        let matchIdx = 0;
+        let loaded = false;
         let nativeH = 0;
-        const lowerQuery = query.toLowerCase();
         let done = false;
 
         return {
           async next(): Promise<IteratorResult<SearchMatch>> {
             while (!done) {
               // Load next page if needed
-              if (!currentPage && pageNum <= pdfDoc.numPages) {
-                currentPage = await pdfDoc.getPage(pageNum);
+              if (!loaded && pageNum <= pdfDoc.numPages) {
+                const page = await pdfDoc.getPage(pageNum);
                 // Native height flips PDF's bottom-left origin to top-left.
-                nativeH = currentPage.getViewport({ scale: 1 }).height;
-                const tc = await currentPage.getTextContent();
-                items = tc.items.filter(
-                  (i) => "str" in i && i.str,
-                ) as typeof items;
-                itemIdx = 0;
-                searchFrom = 0;
+                nativeH = page.getViewport({ scale: 1 }).height;
+                const tc = await page.getTextContent();
+                // Matching runs over the page's stitched text, so a phrase
+                // spanning a style change or line break is one match. One
+                // searchMatches entry per match — a wrapped match paints two
+                // boxes (see dataset.loupeMatch) but counts once.
+                items = filterTextItems(tc.items);
+                pageMatches = enumerateMatches(items, query);
+                matchIdx = 0;
+                loaded = true;
               }
 
-              // Find next match
-              while (itemIdx < items.length) {
-                const item = items[itemIdx];
-                if (!item) break;
-                const str = item.str.toLowerCase();
-                const at = str.indexOf(lowerQuery, searchFrom);
-                if (at >= 0) {
-                  // Advance past the whole match: non-overlapping, in step
-                  // with findMatches and highlightSlot (which numbers boxes by
-                  // occurrence — see dataset.loupeMatch).
-                  searchFrom = at + lowerQuery.length;
-                  self.searchMatches.push({ pageIndex: pageNum - 1, query });
-                  return {
-                    value: {
-                      pageIndex: pageNum - 1,
-                      text: item.str.substring(at, at + query.length),
-                      bounds: [
-                        self.matchBounds(item, at, query.length, nativeH),
-                      ],
-                    },
-                    done: false,
-                  };
-                }
-                itemIdx++;
-                searchFrom = 0;
+              const match = pageMatches[matchIdx];
+              if (match) {
+                matchIdx++;
+                self.searchMatches.push({ pageIndex: pageNum - 1, query });
+                return {
+                  value: {
+                    pageIndex: pageNum - 1,
+                    text: match.text,
+                    bounds: self.sliceBounds(items, match, nativeH),
+                  },
+                  done: false,
+                };
               }
 
               // Move to next page
               pageNum++;
-              currentPage = null;
+              loaded = false;
               items = [];
+              pageMatches = [];
               if (pageNum > pdfDoc.numPages) {
                 done = true;
                 self.highlightCurrentSearch();
@@ -862,6 +861,8 @@ export class PdfAdapter implements DocumentAdapter {
         viewport: null,
         renderSeq: 0,
         renderTask: null,
+        stitchItems: null,
+        spanIndexByItem: null,
       });
       // Size the slot immediately (estimate or cached real size) so offsets
       // are meaningful before anything renders.
@@ -996,6 +997,15 @@ export class PdfAdapter implements DocumentAdapter {
     const textContent = await page.getTextContent();
     slot.textLayerDiv.innerHTML = "";
 
+    // Cache the filtered items and the item→span mapping alongside the DOM
+    // rebuild so highlightSlot (which is sync) can enumerate stitched matches
+    // against exactly the items these spans were built from.
+    const stitchItems = filterTextItems(textContent.items);
+    const spanIndexByItem: number[] = Array(stitchItems.length).fill(-1);
+    slot.stitchItems = stitchItems;
+    slot.spanIndexByItem = spanIndexByItem;
+    let spanCount = 0;
+
     // Mirror pdf.js's text-layer geometry so the transparent, selectable spans
     // line up with the glyphs painted on the canvas: position each run at
     // (baseline − ascent), then stretch it horizontally with scaleX so its
@@ -1004,8 +1014,10 @@ export class PdfAdapter implements DocumentAdapter {
     const ctx = getTextMeasureCtx();
     const ascentRatio = ctx ? getAscentRatio(ctx) : DEFAULT_ASCENT;
 
-    for (const item of textContent.items) {
-      if (!("str" in item) || item.str === "") continue;
+    for (let itemIndex = 0; itemIndex < stitchItems.length; itemIndex++) {
+      const item = stitchItems[itemIndex];
+      if (!item || item.str === "") continue;
+      spanIndexByItem[itemIndex] = spanCount++;
 
       const tx = Util.transform(viewport.transform, item.transform);
       const angle = Math.atan2(tx[1], tx[0]);
@@ -1138,8 +1150,11 @@ export class PdfAdapter implements DocumentAdapter {
       .querySelectorAll(`.${SEARCH_HIGHLIGHT_CLASS}`)
       .forEach((el) => el.remove());
     const query = this.currentSearchQuery;
-    const lowerQuery = query.toLowerCase();
-    if (!lowerQuery) return;
+    if (!query) return;
+    const { stitchItems, spanIndexByItem } = slot;
+    // No text layer yet: renderPageSlot highlights after it builds, and
+    // highlightCurrentSearch repaints matched pages when a search completes.
+    if (!stitchItems || !spanIndexByItem) return;
 
     // Number each occurrence with its global (document-wide) match ordinal so
     // the active match can be singled out. `searchMatches` records one entry
@@ -1152,21 +1167,23 @@ export class PdfAdapter implements DocumentAdapter {
     const base = this.searchMatches.filter(
       (m) => m.pageIndex < slot.pageNum - 1,
     ).length;
-    let local = 0;
 
     const layerRect = slot.textLayerDiv.getBoundingClientRect();
-    for (const span of slot.textLayerDiv.querySelectorAll("span")) {
-      const textNode = span.firstChild;
-      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) continue;
-      const lowerText = (textNode.textContent ?? "").toLowerCase();
-
-      let from = lowerText.indexOf(lowerQuery);
-      while (from >= 0) {
-        const ordinal = base + local;
-        local++;
+    const spans = Array.from(slot.textLayerDiv.querySelectorAll("span"));
+    // Same enumeration as search()/findMatches(), so painted occurrences stay
+    // one-to-one with counted matches. Every box of one match shares one
+    // ordinal: a match wrapping a line paints a box per slice but counts (and
+    // activates) as one.
+    const matches = enumerateMatches(stitchItems, query);
+    for (let matchIdx = 0; matchIdx < matches.length; matchIdx++) {
+      const ordinal = base + matchIdx;
+      for (const slice of matches[matchIdx]?.slices ?? []) {
+        const spanIdx = spanIndexByItem[slice.itemIndex] ?? -1;
+        const textNode = spanIdx >= 0 ? spans[spanIdx]?.firstChild : null;
+        if (!textNode || textNode.nodeType !== Node.TEXT_NODE) continue;
         const range = document.createRange();
-        range.setStart(textNode, from);
-        range.setEnd(textNode, from + query.length);
+        range.setStart(textNode, slice.start);
+        range.setEnd(textNode, slice.end);
         for (const rect of range.getClientRects()) {
           const box = document.createElement("div");
           box.className = SEARCH_HIGHLIGHT_CLASS;
@@ -1177,7 +1194,6 @@ export class PdfAdapter implements DocumentAdapter {
             `width:${rect.width}px;height:${rect.height}px;`;
           slot.textLayerDiv.appendChild(box);
         }
-        from = lowerText.indexOf(lowerQuery, from + lowerQuery.length);
       }
     }
 
