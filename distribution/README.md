@@ -7,10 +7,10 @@ PDF, Word and image viewing in your app, with your own interface. One prebuilt p
 Run this in your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
 ```
 
-No GitHub account, repository clone or Loupe build is needed. This package is free for non-production evaluation and prototyping, including internal evaluation by companies. Commercial or production use requires separate written permission from Veridox. See LICENSE for the complete terms.
+No GitHub account, repository clone or Loupe build is needed. Free for personal, commercial and production use. No separate approval is required. You may ship Loupe within your applications; standalone redistribution of the library, SDK or package is prohibited. Preserve the licence and copyright notices in permitted copies. See LICENSE for the complete terms.
 
 ## Open a Word file
 

@@ -5,12 +5,12 @@
 Use Node.js 24 LTS for development. In your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
 ```
 
 One prebuilt package includes the core, PDF, DOCX and image adapters, plus optional React bindings. No GitHub login, clone or library build is required. Plain TypeScript apps do not need React; the example below uses React and React DOM >=18 from your app.
 
-Free for non-production evaluation and prototyping. Commercial or production use requires separate written permission from Veridox. See the [download licence](https://tryloupe.lovable.app/downloads/LOUPE-EVALUATION-LICENSE.txt). The public [plain TypeScript example](https://tryloupe.lovable.app/downloads/README.md) includes file selection and mounting.
+Free for personal, commercial and production use. No separate approval is required. You may ship Loupe within your applications; standalone redistribution of the library, SDK or package is prohibited. See the [download licence](https://tryloupe.lovable.app/downloads/LOUPE-LICENSE.txt). The public [plain TypeScript example](https://tryloupe.lovable.app/downloads/README.md) includes file selection and mounting.
 
 ## Quick Example
 

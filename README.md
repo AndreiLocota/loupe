@@ -2,7 +2,7 @@
 
 A headless document viewer library for **PDF, DOCX, and images**. Rendering happens in the browser; no Loupe server, API key, or account is needed at runtime. Your app provides the toolbar and surrounding interface. TypeScript core, optional React bindings.
 
-[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz)
+[Try Loupe](https://tryloupe.lovable.app/) · [Multi-format playground](https://tryloupe.lovable.app/playground) · [Developer guide](https://tryloupe.lovable.app/developers) · [Package downloads](https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz)
 
 ## From the demo to your app
 
@@ -11,7 +11,7 @@ The browser demo is a Word inspector built with Loupe. Loupe supplies document r
 Install the complete viewer package in your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
 ```
 
 This prebuilt package includes the core, PDF, Word and image adapters, and optional React bindings. No GitHub account, repository clone or Loupe build is needed. Start with the [integration guide](docs/getting-started.md) or the [public package guide](https://tryloupe.lovable.app/downloads/README.md).
@@ -29,9 +29,9 @@ await viewer.loadDocument({ data: file, fileName: file.name }, { initialZoom: 'f
 
 Give the viewer element a height. The guide includes the file input, error handling and cleanup. Vite automatically emits the required workers and WASM; an optional `npx loupe-assets public/loupe` command supports bundlers needing explicit asset URLs.
 
-## Evaluation terms
+## Licence
 
-The public all-in-one download is free for non-production evaluation and prototyping, including internal evaluation by companies. Commercial or production use requires separate written permission from Veridox. Redistribution is not granted. See [distribution/LICENSE](distribution/LICENSE). The source repository is public under the same evaluation terms; see [LICENSE](LICENSE).
+Free for personal, commercial and production use. No separate approval is required. You may ship Loupe within your applications; standalone redistribution of the library, SDK or package is prohibited. Preserve the licence and copyright notices in permitted copies. See [distribution/LICENSE](distribution/LICENSE) and [LICENSE](LICENSE). Loupe is source-available, not open source.
 
 ## Internal packages
 
@@ -72,4 +72,4 @@ For the saved website, enter `site/`, then run `bun install --frozen-lockfile` a
 
 ## Distribution
 
-Maintainers with repository access can run `npm run build` and `npm run pack:viewer` to create the public evaluation archive and its integrity manifest. Its content is compiled from all five packages, with one shared core and optional React peers. Source and compiled distribution carry the same evaluation terms. The original `pack:packages` workflow remains available for internal consumers. No package has been published to the public npm registry.
+Maintainers with repository access can run `npm run build` and `npm run pack:viewer` to create the public archive and its integrity manifest. Its content is compiled from all five packages, with one shared core and optional React peers. Source and compiled distribution carry the same use licence. The original `pack:packages` workflow remains available for internal consumers. No package has been published to the public npm registry.
