@@ -9,6 +9,89 @@ import {
   getDocument,
   Util
 } from "pdfjs-dist";
+
+// packages/viewer-pdf/src/textStitch.ts
+function filterTextItems(items) {
+  return items.filter(
+    (i) => typeof i === "object" && i !== null && "str" in i && typeof i.str === "string"
+  );
+}
+function foldCase(s) {
+  const lower = s.toLowerCase();
+  if (lower.length === s.length) return lower;
+  let out = "";
+  for (const ch of s) {
+    const l = ch.toLowerCase();
+    out += l.length === ch.length ? l : ch;
+  }
+  return out;
+}
+function enumerateMatches(items, query) {
+  if (query.length === 0) return [];
+  const itemStart = Array(items.length);
+  const parts = [];
+  let stitchedLength = 0;
+  let pendingSeparator = false;
+  let tailIsWhitespace = true;
+  for (let i = 0; i < items.length; i++) {
+    const text = items[i]?.str ?? "";
+    if (text) {
+      if (pendingSeparator && stitchedLength > 0 && !tailIsWhitespace && !/\s/.test(text[0] ?? "")) {
+        parts.push(" ");
+        stitchedLength += 1;
+      }
+      pendingSeparator = false;
+    }
+    itemStart[i] = stitchedLength;
+    if (text) {
+      parts.push(text);
+      stitchedLength += text.length;
+      tailIsWhitespace = /\s/.test(text[text.length - 1] ?? "");
+    }
+    if (items[i]?.hasEOL) pendingSeparator = true;
+  }
+  const stitched = parts.join("");
+  const haystack = foldCase(stitched);
+  const needle = foldCase(query);
+  const matches = [];
+  let from = 0;
+  for (; ; ) {
+    const at = haystack.indexOf(needle, from);
+    if (at === -1) break;
+    const slices = offsetsToSlices(itemStart, items, at, at + needle.length);
+    if (slices.length > 0) {
+      matches.push({ text: stitched.slice(at, at + needle.length), slices });
+    }
+    from = at + needle.length;
+  }
+  return matches;
+}
+function offsetsToSlices(itemStart, items, start, end) {
+  let lo = 0;
+  let hi = itemStart.length - 1;
+  while (lo < hi) {
+    const mid = lo + hi + 1 >> 1;
+    if ((itemStart[mid] ?? 0) <= start) lo = mid;
+    else hi = mid - 1;
+  }
+  const slices = [];
+  for (let i = lo; i < items.length; i++) {
+    const base = itemStart[i] ?? 0;
+    if (base >= end) break;
+    const sliceStart = Math.max(start, base);
+    const sliceEnd = Math.min(end, base + (items[i]?.str.length ?? 0));
+    if (sliceEnd > sliceStart) {
+      slices.push({
+        itemIndex: i,
+        start: sliceStart - base,
+        end: sliceEnd - base
+      });
+    }
+  }
+  return slices;
+}
+
+// packages/viewer-pdf/src/PdfAdapter.ts
 function toHexColor(c) {
   if (!c || c.length < 3) return void 0;
   const h = (n) => (n ?? 0).toString(16).padStart(2, "0");
@@ -359,30 +442,35 @@ var PdfAdapter = class {
   async findMatches(query) {
     const q = query.trim();
     if (!this.pdfDoc || !q) return [];
-    const lower = q.toLowerCase();
     const out = [];
     for (let pageNum = 1; pageNum <= this.pdfDoc.numPages; pageNum++) {
       if (this.abortController.signal.aborted) break;
       const page = await this.pdfDoc.getPage(pageNum);
       const nativeH = page.getViewport({ scale: 1 }).height;
       const tc = await page.getTextContent();
-      const items = tc.items.filter(
-        (i) => "str" in i && Boolean(i.str)
-      );
-      for (const item of items) {
-        const str = item.str.toLowerCase();
-        let idx = str.indexOf(lower);
-        while (idx >= 0) {
-          out.push({
-            pageIndex: pageNum - 1,
-            text: item.str.substring(idx, idx + q.length),
-            bounds: [this.matchBounds(item, idx, q.length, nativeH)]
-          });
-          idx = str.indexOf(lower, idx + q.length);
-        }
+      const items = filterTextItems(tc.items);
+      for (const match of enumerateMatches(items, q)) {
+        out.push({
+          pageIndex: pageNum - 1,
+          text: match.text,
+          bounds: this.sliceBounds(items, match, nativeH)
+        });
       }
     }
     return out;
+  }
+  /** One rect per item slice — a match spanning a style change or a line
+   * break paints one box per item it crosses. */
+  sliceBounds(items, match, nativeH) {
+    const rects = [];
+    for (const slice of match.slices) {
+      const item = items[slice.itemIndex];
+      if (!item) continue;
+      rects.push(
+        this.matchBounds(item, slice.start, slice.end - slice.start, nativeH)
+      );
+    }
+    return rects;
   }
   /**
    * Narrow a text run's box to just the matched substring, proportionally
@@ -416,51 +504,41 @@ var PdfAdapter = class {
     return {
       [Symbol.asyncIterator]() {
         let pageNum = 1;
-        let currentPage = null;
         let items = [];
-        let itemIdx = 0;
-        let searchFrom = 0;
+        let pageMatches = [];
+        let matchIdx = 0;
+        let loaded = false;
         let nativeH = 0;
-        const lowerQuery = query.toLowerCase();
         let done = false;
         return {
           async next() {
             while (!done) {
-              if (!currentPage && pageNum <= pdfDoc.numPages) {
-                currentPage = await pdfDoc.getPage(pageNum);
-                nativeH = currentPage.getViewport({ scale: 1 }).height;
-                const tc = await currentPage.getTextContent();
-                items = tc.items.filter(
-                  (i) => "str" in i && i.str
-                );
-                itemIdx = 0;
-                searchFrom = 0;
+              if (!loaded && pageNum <= pdfDoc.numPages) {
+                const page = await pdfDoc.getPage(pageNum);
+                nativeH = page.getViewport({ scale: 1 }).height;
+                const tc = await page.getTextContent();
+                items = filterTextItems(tc.items);
+                pageMatches = enumerateMatches(items, query);
+                matchIdx = 0;
+                loaded = true;
               }
-              while (itemIdx < items.length) {
-                const item = items[itemIdx];
-                if (!item) break;
-                const str = item.str.toLowerCase();
-                const at = str.indexOf(lowerQuery, searchFrom);
-                if (at >= 0) {
-                  searchFrom = at + lowerQuery.length;
-                  self.searchMatches.push({ pageIndex: pageNum - 1, query });
-                  return {
-                    value: {
-                      pageIndex: pageNum - 1,
-                      text: item.str.substring(at, at + query.length),
-                      bounds: [
-                        self.matchBounds(item, at, query.length, nativeH)
-                      ]
-                    },
-                    done: false
-                  };
-                }
-                itemIdx++;
-                searchFrom = 0;
+              const match = pageMatches[matchIdx];
+              if (match) {
+                matchIdx++;
+                self.searchMatches.push({ pageIndex: pageNum - 1, query });
+                return {
+                  value: {
+                    pageIndex: pageNum - 1,
+                    text: match.text,
+                    bounds: self.sliceBounds(items, match, nativeH)
+                  },
+                  done: false
+                };
               }
               pageNum++;
-              currentPage = null;
+              loaded = false;
               items = [];
+              pageMatches = [];
               if (pageNum > pdfDoc.numPages) {
                 done = true;
                 self.highlightCurrentSearch();
@@ -619,7 +697,9 @@ var PdfAdapter = class {
         rendered: false,
         viewport: null,
         renderSeq: 0,
-        renderTask: null
+        renderTask: null,
+        stitchItems: null,
+        spanIndexByItem: null
       });
       this.applySlotSize(i);
     }
@@ -715,10 +795,17 @@ var PdfAdapter = class {
   async renderTextLayer(page, viewport, slot) {
     const textContent = await page.getTextContent();
     slot.textLayerDiv.innerHTML = "";
+    const stitchItems = filterTextItems(textContent.items);
+    const spanIndexByItem = Array(stitchItems.length).fill(-1);
+    slot.stitchItems = stitchItems;
+    slot.spanIndexByItem = spanIndexByItem;
+    let spanCount = 0;
     const ctx = getTextMeasureCtx();
     const ascentRatio = ctx ? getAscentRatio(ctx) : DEFAULT_ASCENT;
-    for (const item of textContent.items) {
-      if (!("str" in item) || item.str === "") continue;
+    for (let itemIndex = 0; itemIndex < stitchItems.length; itemIndex++) {
+      const item = stitchItems[itemIndex];
+      if (!item || item.str === "") continue;
+      spanIndexByItem[itemIndex] = spanCount++;
       const tx = Util.transform(viewport.transform, item.transform);
       const angle = Math.atan2(tx[1], tx[0]);
       const fontHeight = Math.hypot(tx[2], tx[3]);
@@ -807,24 +894,24 @@ var PdfAdapter = class {
   highlightSlot(slot) {
     slot.textLayerDiv.querySelectorAll(`.${SEARCH_HIGHLIGHT_CLASS}`).forEach((el) => el.remove());
     const query = this.currentSearchQuery;
-    const lowerQuery = query.toLowerCase();
-    if (!lowerQuery) return;
+    if (!query) return;
+    const { stitchItems, spanIndexByItem } = slot;
+    if (!stitchItems || !spanIndexByItem) return;
     const base = this.searchMatches.filter(
       (m) => m.pageIndex < slot.pageNum - 1
     ).length;
-    let local = 0;
     const layerRect = slot.textLayerDiv.getBoundingClientRect();
-    for (const span of slot.textLayerDiv.querySelectorAll("span")) {
-      const textNode = span.firstChild;
-      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) continue;
-      const lowerText = (textNode.textContent ?? "").toLowerCase();
-      let from = lowerText.indexOf(lowerQuery);
-      while (from >= 0) {
-        const ordinal = base + local;
-        local++;
+    const spans = Array.from(slot.textLayerDiv.querySelectorAll("span"));
+    const matches = enumerateMatches(stitchItems, query);
+    for (let matchIdx = 0; matchIdx < matches.length; matchIdx++) {
+      const ordinal = base + matchIdx;
+      for (const slice of matches[matchIdx]?.slices ?? []) {
+        const spanIdx = spanIndexByItem[slice.itemIndex] ?? -1;
+        const textNode = spanIdx >= 0 ? spans[spanIdx]?.firstChild : null;
+        if (!textNode || textNode.nodeType !== Node.TEXT_NODE) continue;
         const range = document.createRange();
-        range.setStart(textNode, from);
-        range.setEnd(textNode, from + query.length);
+        range.setStart(textNode, slice.start);
+        range.setEnd(textNode, slice.end);
         for (const rect of range.getClientRects()) {
           const box = document.createElement("div");
           box.className = SEARCH_HIGHLIGHT_CLASS;
@@ -832,7 +919,6 @@ var PdfAdapter = class {
           box.style.cssText = `position:absolute;pointer-events:none;background:${HIGHLIGHT_BASE_BACKGROUND};left:${rect.left - layerRect.left}px;top:${rect.top - layerRect.top}px;width:${rect.width}px;height:${rect.height}px;`;
           slot.textLayerDiv.appendChild(box);
         }
-        from = lowerText.indexOf(lowerQuery, from + lowerQuery.length);
       }
     }
     this.applyActiveStyle(slot);
@@ -879,4 +965,3 @@ export {
   PdfAdapter,
   createPdfAdapterFactory
 };
-//# sourceMappingURL=index.js.map

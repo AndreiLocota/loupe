@@ -64,6 +64,9 @@ declare class PdfAdapter implements DocumentAdapter {
      * contract `search()` yields.
      */
     findMatches(query: string): Promise<SearchMatch[]>;
+    /** One rect per item slice — a match spanning a style change or a line
+     * break paints one box per item it crosses. */
+    private sliceBounds;
     /**
      * Narrow a text run's box to just the matched substring, proportionally
      * (text-content items can span a whole line, so the full run reads as a

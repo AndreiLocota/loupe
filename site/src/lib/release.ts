@@ -10,20 +10,20 @@ export const PUBLIC_PACKAGE_AVAILABLE = true;
 export const PUBLIC_LIBRARY_AVAILABLE = true;
 
 export const PACKAGE_NAME = "@andreilocota/loupe";
-export const PACKAGE_VERSION = "0.1.2";
+export const PACKAGE_VERSION = "0.1.3";
 export const SITE_ORIGIN = "https://tryloupe.lovable.app";
 export const PACKAGE_FILE = `andreilocota-loupe-${PACKAGE_VERSION}.tgz`;
 
 export const REPO_URL = "https://github.com/AndreiLocota/loupe";
 export const REPO_CLONE_URL = `${REPO_URL}.git`;
-export const RELEASE_TAG = "v0.1.2";
+export const RELEASE_TAG = "v0.1.3";
 export const RELEASE_URL = `${REPO_URL}/releases/tag/${RELEASE_TAG}`;
 export const DOCS_URL = `${REPO_URL}/blob/main/docs/getting-started.md`;
 export const EXAMPLE_URL = `${REPO_URL}/blob/main/examples/viewer-app.tsx`;
 export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 
 export const PACKAGE_URL = `${REPO_URL}/releases/download/${RELEASE_TAG}/${PACKAGE_FILE}`;
-export const PACKAGE_SHA256 = "0dfc09db73c83428f5819b0328738b3c77d0d6e7514b8736f3e063ec9f3dafcf";
+export const PACKAGE_SHA256 = "c0f59f1918ddd5462f7a3c0a0695bfe71b6ee0831e1f7238b756cbd43db397d4";
 export const PACKAGE_INSTALL_COMMAND = `npm install ${PACKAGE_URL}`;
 export const LOUPE_LICENSE_PATH = "/downloads/LOUPE-LICENSE.txt";
 export const PACKAGE_README_PATH = "/downloads/README.md";

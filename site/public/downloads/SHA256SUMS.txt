@@ -1,3 +1,4 @@
+c0f59f1918ddd5462f7a3c0a0695bfe71b6ee0831e1f7238b756cbd43db397d4  andreilocota-loupe-0.1.3.tgz
 0dfc09db73c83428f5819b0328738b3c77d0d6e7514b8736f3e063ec9f3dafcf  andreilocota-loupe-0.1.2.tgz
 f5707068d5de3ecf75e3e81ae2e458eeadf79eb15992df803a5a8b203bf0f240  veridox-ai-loupe-0.1.0.tgz
 344edf10623ac5dc661b12cd6742166eda675e419d0accfdf0ea2eca80a1e96b  andreilocota-loupe-0.1.1.tgz

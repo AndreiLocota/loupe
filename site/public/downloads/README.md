@@ -7,7 +7,7 @@ PDF, Word and image viewing in your app, with your own interface. One prebuilt p
 Run this in your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.3/andreilocota-loupe-0.1.3.tgz
 ```
 
 The package is downloaded from the Loupe GitHub release; no GitHub account, repository clone or Loupe build is needed. It is not published to the public npm registry. Source: https://github.com/AndreiLocota/loupe

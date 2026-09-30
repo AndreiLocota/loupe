@@ -380,7 +380,7 @@ function DevelopersPage() {
             <li>Word thumbnails are opt-in. DOCM files are viewed as Word documents; macros are never run.</li>
             <li>Only TIFF exposes pages, thumbnails and rotation among images; other images are a single view without rotation.</li>
             <li>HEIC and HEIF use a decoder that loads only when such a file is opened.</li>
-            <li>No OCR: images have no text selection or search. PDF search and selection need text in the document.</li>
+            <li>No OCR: images have no text selection or search. PDF search and selection need text in the document. PDF search matches phrases split across font styles and line breaks, highlighting every part together.</li>
           </ul>
         </section>
 

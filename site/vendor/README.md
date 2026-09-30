@@ -1,9 +1,9 @@
 # Bundled Loupe
 
-Vendored for the Loupe document viewer. Public source and compiled distributions are available under the Loupe Loupe Use Licence; preserve copyright notices (© Veridox). Internal package names are retained for build compatibility.
+Vendored for the Loupe document viewer. Public source and compiled distributions are available under the Loupe Use Licence; preserve copyright notices (© Veridox). Internal package names are retained for build compatibility.
 Upstream: https://github.com/veridox-ai/tools.loupe
 Pinned commit: 6edcf2ceeda0be7991708bc75f5cdbaf7f087628
-Versions: core 0.3.1, DOCX 3.0.2.
+Versions: core 0.3.1, DOCX 3.0.2 (commit above); PDF 2.0.1 from veridox-ai/tools.loupe c9072eadfe4370d13c1646e888db5c17bde53a46 (site dist build from the v0.1.3 release asset loupe-site-pdf-2.0.1.zip). Image, React and the PDF worker are unchanged prior versions.
 No local patches: both packages are the unmodified upstream `tsup` ESM + declaration output for that commit. The previous per-page iframe viewport-geometry patch is gone — native viewport geometry (real per-page rects, `scrollToRect`) is upstream now.
 Only the package manifests were normalised: `main`/`types`/`exports`/`files` point at `lib/` (upstream publishes from `dist/`), and publish-only fields were dropped.
 
