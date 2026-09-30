@@ -1,19 +1,31 @@
-Loupe Evaluation Licence
+Loupe Use Licence
 Copyright (c) 2026 Veridox. All rights reserved.
 
-Veridox permits you to download, install, run and internally modify the Loupe
-software (source or compiled) distributed with this licence, without charge, solely to evaluate,
-test and prototype integrations in a non-production environment. This
-permission includes internal evaluation by commercial organisations.
+Permission is granted, without charge, to download, install, use, copy and
+modify Loupe for personal, internal, commercial and production use.
+No separate approval, licence fee or royalty is required for these uses.
 
-Commercial or production use requires separate written permission from
-Veridox. You may not redistribute, sublicense, sell, or make the Loupe software
-or modified versions available to third parties under this evaluation licence.
-Preserve this licence and all copyright notices in permitted copies.
+You may deploy Loupe as part of your applications, including commercial
+websites and hosted services. You may distribute compiled Loupe code and
+required runtime assets, including modified versions, to users and customers
+as part of those applications. This includes serving JavaScript, workers
+and WASM assets to users' browsers. Recipients may run those copies as part
+of the applications.
 
-No ownership is transferred. Rights not expressly granted are reserved.
-Third-party components remain subject to their own licences; this licence
-does not limit rights granted by those licences.
+You may not redistribute, publish, sublicense or sell Loupe or modified
+versions as a standalone library, SDK, package or source-code distribution.
+The application-distribution permission above does not permit repackaging
+Loupe as a standalone library, SDK or package.
+
+Preserve this licence and all copyright notices in permitted copies,
+including an application's third-party notices when distributing compiled
+code or runtime assets. No ownership is transferred. Rights not expressly
+granted are reserved.
+
+These permissions also apply to Loupe copies previously supplied by Veridox
+under the Loupe Evaluation Licence, replacing its evaluation-only limitation
+and separate-approval requirement. Third-party components remain subject to
+their own licences; this licence does not limit rights granted by them.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR

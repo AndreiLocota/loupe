@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 
 import {
-  EVALUATION_LICENSE_PATH,
+  LOUPE_LICENSE_PATH,
   LICENSE_SUMMARY,
   PACKAGE_INSTALL_COMMAND,
   PACKAGE_NAME,
@@ -11,7 +11,7 @@ import {
 } from "@/lib/release";
 
 const AGENT_PROMPT = {
-  task: "Add Loupe document viewing to this app for evaluation.",
+  task: "Add Loupe document viewing to this app.",
   install: PACKAGE_INSTALL_COMMAND,
   docs: `${SITE_ORIGIN}/developers`,
   package_readme: `${SITE_ORIGIN}${PACKAGE_README_PATH}`,
@@ -22,7 +22,7 @@ const AGENT_PROMPT = {
     "Load adapters only in browser code in SSR apps. Ensure workers/WASM resolve, clean up the viewer on unmount, and verify a production build and real document rendering.",
   ],
   licence: LICENSE_SUMMARY,
-  licence_text: `${SITE_ORIGIN}${EVALUATION_LICENSE_PATH}`,
+  licence_text: `${SITE_ORIGIN}${LOUPE_LICENSE_PATH}`,
 };
 
 export const AGENT_PROMPT_JSON = JSON.stringify(AGENT_PROMPT, null, 2);

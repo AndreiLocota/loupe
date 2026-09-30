@@ -1,6 +1,6 @@
 # Bundled Loupe
 
-Vendored for the Loupe document viewer. Public source and compiled distributions are available under the Loupe evaluation licence; preserve copyright notices (© Veridox). Internal package names are retained for build compatibility.
+Vendored for the Loupe document viewer. Public source and compiled distributions are available under the Loupe Loupe Use Licence; preserve copyright notices (© Veridox). Internal package names are retained for build compatibility.
 Upstream: https://github.com/veridox-ai/tools.loupe
 Pinned commit: 6edcf2ceeda0be7991708bc75f5cdbaf7f087628
 Versions: core 0.3.1, DOCX 3.0.2.
@@ -12,3 +12,5 @@ The predev/prebuild script `scripts/copy-loupe-assets.mjs` copies `docx_parser_b
 
 Runtime artifacts and type declarations are checked in so installing this project never needs the sibling tools.loupe checkout or private registry credentials. Public transitive dependencies (`@silurus/ooxml`, `jszip`) retain their package declarations.
 Updates: build and test an explicit upstream commit, replace both package folders together, record the commit and any local patches here, update the lockfile and repeat clean-install/browser verification.
+
+Commercial and production use need no separate approval. Compiled Loupe code and runtime assets may ship within applications; standalone redistribution remains prohibited. Preserve copyright and third-party notices. See public/downloads/LOUPE-LICENSE.txt.

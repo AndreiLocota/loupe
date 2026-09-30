@@ -7,12 +7,12 @@ PDF, Word and image viewing in your app, with your own interface. One prebuilt p
 Run this in your application:
 
 ```sh
-npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.1/andreilocota-loupe-0.1.1.tgz
+npm install https://github.com/AndreiLocota/loupe/releases/download/v0.1.2/andreilocota-loupe-0.1.2.tgz
 ```
 
 The package is downloaded from the Loupe GitHub release; no GitHub account, repository clone or Loupe build is needed. It is not published to the public npm registry. Source: https://github.com/AndreiLocota/loupe
 
-Free for non-production evaluation and prototyping. Commercial or production use requires written permission. See LICENSE for the complete terms. Loupe is not open source.
+Free for personal, commercial and production use. No separate approval is required. You may ship Loupe within your applications; standalone redistribution of the library, SDK or package is prohibited. See LICENSE (https://tryloupe.lovable.app/downloads/LOUPE-LICENSE.txt) for the complete terms. Loupe is not open source.
 
 ## Open a Word file
 

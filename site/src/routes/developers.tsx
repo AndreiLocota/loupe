@@ -19,7 +19,7 @@ import {
 } from "@/components/loupe/site-data";
 import {
   ACCESS_NOTE,
-  EVALUATION_LICENSE_PATH,
+  LOUPE_LICENSE_PATH,
   LICENSE_SUMMARY,
   LICENSE_URL,
   LINK_ACCESS_SUFFIX,
@@ -36,7 +36,7 @@ import {
 
 const TITLE = "Loupe for developers — add document viewing to your app";
 const DESCRIPTION =
-  "Install one package for PDF, Word and image viewing in your app, with optional React bindings. Free for evaluation and prototyping.";
+  "Install one package for PDF, Word and image viewing in your app, with optional React bindings. Free for commercial and production use.";
 
 export const Route = createFileRoute("/developers")({
   head: () => ({
@@ -205,7 +205,7 @@ function DevelopersPage() {
               <Download className="size-4" aria-hidden />
               Download package
             </a>
-            <Local href={EVALUATION_LICENSE_PATH}>Evaluation licence</Local>
+            <Local href={LOUPE_LICENSE_PATH}>Licence</Local>
             <Local href={PACKAGE_README_PATH}>Package README</Local>
             <Ext href={REPO_URL}>Source on GitHub</Ext>
           </div>
@@ -419,11 +419,11 @@ function DevelopersPage() {
           <H2 id="license" eyebrow="Terms" title="Licence" />
           <p className="text-sm leading-relaxed text-muted-foreground">
             {LICENSE_SUMMARY} Loupe is not open source. The{" "}
-            <Local href={EVALUATION_LICENSE_PATH}>evaluation licence</Local> is the complete terms
+            <Local href={LOUPE_LICENSE_PATH}>Loupe Use Licence</Local> is the complete terms
             for the package and the source.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            Source on GitHub, under the same evaluation terms (
+            Source on GitHub, under the same use licence (
             <Ext href={LICENSE_URL}>LICENSE</Ext>): <Ext href={REPO_URL}>AndreiLocota/loupe</Ext>
           </p>
         </section>

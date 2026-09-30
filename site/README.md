@@ -20,7 +20,7 @@ bun run build    # prebuild does the same
 
 ## Notes for the inspector
 
-- Loupe packages are vendored in `vendor/` under their internal names. The public source and compiled package use the evaluation licence (© Veridox); they are not open source.
+- Loupe packages are vendored in `vendor/` under their internal names. The public source and compiled package use the Loupe Use Licence (© Veridox); they are not open source.
 - The DOCX engine is browser-only; `vite.config.ts` swaps it for a throwing stub in the server build.
 - Inspector colours are scoped to the inspector (`.loupe-try` / `html.loupe-try-active` in `src/styles.css`); the `dark` class is removed when leaving it.
 - Samples live in `public/sample-*.docx`.
@@ -33,6 +33,8 @@ Exported from Lovable project `dd78098d-5a29-4079-bf95-8d0246305318`, revision `
 
 The background asset is included under `public/__l5e/assets-v1/` so this export can run independently of Lovable asset hosting.
 
-The developer guide installs `@andreilocota/loupe` 0.1.1 from a public GitHub release in `AndreiLocota/loupe`. Source is public under evaluation terms. `/downloads/` retains the licence, README, checksums and legacy 0.1.0 archive.
+The developer guide installs `@andreilocota/loupe` 0.1.2 from a public GitHub release in `AndreiLocota/loupe`. Source is public under the Loupe Use Licence. `/downloads/` retains the licence, README, checksums and legacy 0.1.0 archive.
 
 The developer hero includes the user-provided 16-second launch video in `public/media/`, with its audio stream removed. The inline loop pauses offscreen and respects reduced-motion preferences and manual pause.
+
+Commercial and production use need no separate approval. Compiled Loupe code and runtime assets may ship within applications; standalone redistribution remains prohibited. Preserve copyright and third-party notices. See public/downloads/LOUPE-LICENSE.txt.
